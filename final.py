@@ -1,8 +1,9 @@
 
-"""Anna Buchele and Lydia Zuehsow"""
+"""Emily Yeh and Lydia Zuehsow"""
 
-"""This program allows you to control your mouse by moving around a green object in front of the webcam.
-	We think that with some more implementation, we would be able to do some really fururistic-looking stuff."""
+"""This program allows a person to wave a flashlight or laser pointer to cast spells, Harry Potter-style!"""
+
+"""For future reference, here's a link to our Google doc: https://docs.google.com/document/d/1daGjz8CWycfev0Fs96ru-Na5JNtqs2nVE1fHZ1ydhX0/edit?usp=sharing"""
 
 
 from collections import deque
@@ -34,6 +35,7 @@ class WebCam(object):
 		self.calrad = []
 		self.calcounter = counter
 
+
 	def getcenter(self, greenLower, greenUpper):
 		self.args = vars(self.ap.parse_args())
 
@@ -42,7 +44,7 @@ class WebCam(object):
 		#grab current frame
 		(self.grabbed, self.frame) = self.camera.read()
 		
-		#resize frame, blur frame, convert to HSV color space
+		#resize frame, blur frame, conert to HSV color space
 		self.frame = imutils.resize(self.frame, width=600)
 		blurred = cv2.GaussianBlur(self.frame,(11,11),0)
 		hsv = cv2.cvtColor(self.frame,cv2.COLOR_BGR2HSV)
@@ -134,7 +136,6 @@ class Calibration(object):
 		caldYs=[]
 		calxs=[]
 		calys=[]
-
 		while calibrating:
 			califind = webcam.getcenter(greenLower, greenUpper)
 			A = "Please hold your object very still"
@@ -231,6 +232,24 @@ class Controller(object):
 				dY = dYs.pop(0)
 				cursor.MoveV(dY)
 				pygame.event.post(select_event)
+			elif event.type == GRID1:
+				print 'Grid 1'
+			elif event.type == GRID2:
+				print 'Grid 2'
+			elif event.type == GRID3:
+				print 'Grid 3'
+			elif event.type == GRID4:
+				print 'Grid 4'
+			elif event.type == GRID5:
+				print 'Grid 5'
+			# elif event.type == GRID6:
+			# 	print 'Grid 6'
+			# elif event.type == GRID7:
+			# 	print 'Grid 7'
+			# elif event.type == GRID8:
+			# 	print 'Grid 8'
+			# elif event.type == GRID9:
+			# 	print 'Grid 9'
 			elif event.type == SELECT:
 				ball.color=redColor
 				ball.selected = True
@@ -286,7 +305,6 @@ if __name__ == '__main__':
 	cursor = Mouse(calx,caly)
 	cursor.initialsetup()
 
-
 	center = 0
 	counter = 0
 	calcounter = 0
@@ -305,8 +323,29 @@ if __name__ == '__main__':
 	SELECT = pygame.USEREVENT+3
 	select_event= pygame.event.Event(SELECT)
 
+	GRID1 = pygame.USEREVENT+4
+	grid1_event = pygame.event.Event(GRID1)
+	GRID2 = pygame.USEREVENT+5
+	grid2_event = pygame.event.Event(GRID2)
+	GRID3 = pygame.USEREVENT+6
+	grid3_event = pygame.event.Event(GRID3)
+	GRID4 = pygame.USEREVENT+7
+	grid4_event = pygame.event.Event(GRID4)
+	GRID5 = pygame.USEREVENT+8
+	grid5_event = pygame.event.Event(GRID5)
+	# GRID6 = pygame.USEREVENT+9
+	# grid6_event = pygame.event.Event(GRID6)
+	# GRID7 = pygame.USEREVENT+10
+	# grid7_event = pygame.event.Event(GRID7)
+	# GRID8 = pygame.USEREVENT+11
+	# grid8_event = pygame.event.Event(GRID8)
+	# GRID9 = pygame.USEREVENT+12
+	# grid9_event = pygame.event.Event(GRID9)
+
+# ,GRID3,GRID4,GRID5,GRID6,GRID7,GRID8,GRID9
+
 	# makes sure only the events we want are on the event queue
-	allowed_events = [GREENMOVEV,GREENMOVEH,QUIT,SELECT]
+	allowed_events = [GREENMOVEV,GREENMOVEH,QUIT,SELECT,GRID1,GRID2,GRID3,GRID4]
 	pygame.event.set_allowed(allowed_events)
 
 	buf = 10
@@ -319,28 +358,10 @@ if __name__ == '__main__':
 	"""RUNTIME LOOP"""
 
 	#This is the main loop of the program. 
-	ballcolor1 = random.randint(0,255)
-	ballcolor2 = random.randint(0,255)
-	ballcolor3 = random.randint(0,255)
-	frame = 0
+	ballcolor = random.randint(0,255)
+
 	while running:
-		for event in pygame.event.get():
-			if event.type == QUIT:
-				running == False
-				pygame.display.quit()
-		ballcolor1 = ballcolor1 + random.randint(-10,10)
-		ballcolor2 = ballcolor2 + random.randint(-10,10)
-		ballcolor3 = ballcolor3 + random.randint(-10,10)
 
-		ballcolor = (int(ballcolor1),int(ballcolor2),int(ballcolor3))
-		for color in ballcolor:
-			if color > 255 or color < 0:
-				ballcolor = (100, 100, 100)
-				ballcolor1 = 100
-				ballcolor2 = 100
-				ballcolor3 = 100
-
-		print ballcolor
 		pygame.draw.circle(screen,ballcolor,(int(ball.x),int(ball.y)),20,0)
 		#Find the center of any green objects' contours
 
@@ -351,6 +372,7 @@ if __name__ == '__main__':
 			center = gotcenter[0]
 			radius = gotcenter[1]
 			cv2.circle(webcam.frame,center,5,(0,0,255), -1)
+
 			cv2.line(webcam.frame, (0,0), (0,450), (255,0,0), 1)
 			cv2.line(webcam.frame, (200,0), (200,450), (255,0,0), 1)
 			cv2.line(webcam.frame, (400,0), (400,450), (255,0,0), 1)
@@ -366,6 +388,28 @@ if __name__ == '__main__':
 				webcam.rad.append(radius)
 				webcam.counter = webcam.counter + 1
 				counter = webcam.counter
+
+				(x,y) = center
+				print (x,y)
+				if x <= 200 and y <= 150:
+					pygame.event.post(grid1_event)
+				if (x >= 200 and x <= 400) and y <=150:
+					pygame.event.post(grid2_event)
+				if x >= 400 and y <= 150:
+					pygame.event.post(grid3_event)
+				if x <= 200 and (y >= 150 and y <=300):
+					pygame.event.post(grid4_event)
+				if (x >= 200 and x <= 400) and (y >= 150 and y <=300):
+					# pygame.event.post(grid5_event)
+					pygame.event.post(grid5_event)
+				# if x >= 400 and (y >= 150 and y <= 300):
+				# 	pygame.event.post(grid6_event)
+				# if x <= 200 and y >= 300:
+				# 	pygame.event.post(grid7_event)
+				# if (x >= 200 and x <= 400) and y >= 300:
+				# 	pygame.event.post(grid8_event)
+				# if x >= 400 and y >= 300:
+				# 	pygame.event.post(grid9_event)
 
 		for i in range (1,len(webcam.pts)):
 			# ignoring tracked points that are None
@@ -410,8 +454,6 @@ if __name__ == '__main__':
 			pygame.quit
 			sys.exit()
 			break
-
-
 if running == False:
 		#release camera, close open windows
 		webcam.camera.release()
