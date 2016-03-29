@@ -1,4 +1,3 @@
-
 """Emily Yeh and Lydia Zuehsow"""
 
 """This program allows a person to wave a flashlight or laser pointer to cast spells, Harry Potter-style!"""
