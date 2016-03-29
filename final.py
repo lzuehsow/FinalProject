@@ -17,6 +17,7 @@ import time
 import numpy as np
 import random
 
+
 class WebCam(object):
 	def __init__(self, bufsize = 100, counter = 0):
 		"""Run webcam, find green, return center coordinates?"""
@@ -75,29 +76,21 @@ class WebCam(object):
 				center = (int(M["m10"]/M["m00"]), int(M["m01"]/M["m00"]))
 				return [center,radius]
 
-class PygameView(object):
-	"""Visualizes a fake desktop in a pygame window"""
-	def __init__(self,model, screen):
-		"""Initialise the view with a specific model"""
-		self.model = model
-		self.screen = screen
-		redColor = pygame.Color(255,0,0)
-		greenColor = pygame.Color(0,255,0)
-		blueColor = pygame.Color(0,0,255)
-		whiteColor = pygame.Color(255,255,255)
-
-
-	def update(self):
-		"""Draw the game state to the screen"""
-		pygame.display.update()
 
 class Mouse(object):
 	"""Represents the mouse cursor"""
-	def __init__(self, mousex=100, mousey=100):
-		self.x = mousex
-		self.y = mousey
-	def initialsetup(self):
-		pygame.mouse.set_pos(self.x,self.y)
+	def __init__(self,color,x=50,y=50,selected=False):
+		self.x = x
+		self.y = y
+		self.color = color
+		self.selected = selected
+
+	def select(self):
+		if self.selected == True:
+			self.x = cursor.x
+			self.y = cursor.y
+			self.color = redColor
+			
 	def MoveH(self,dY):
 		if 0 < (self.x - dX/300) < screenwidth:
 			self.x = self.x - (dX/100)
@@ -105,8 +98,6 @@ class Mouse(object):
 			self.x = screenwidth - 10
 		elif (self.x - dX/300) <= 0:
 			self.x = 10
-		pygame.mouse.set_pos(self.x,self.y)
-		ball.select()
 	def MoveV(self,dY):
 		if 0 < (self.y + dY/300) < screenheight:
 			self.y = self.y + (dX/100)
@@ -114,9 +105,6 @@ class Mouse(object):
 			self.y = screenheight - 10
 		elif (self.y + dY/300) <= 0:
 			self.y = 10
-		pygame.mouse.set_pos(self.x,self.y)
-		ball.select()
-
 
 
 class Calibration(object):
@@ -139,9 +127,9 @@ class Calibration(object):
 		while calibrating:
 			califind = webcam.getcenter(greenLower, greenUpper)
 			A = "Please hold your object very still"
-			B=	"in the center of the screen."
-			C=  "The system is calibrating."
-			D= "This will only take a moment."
+			B =	"in the center of the screen."
+			C = "The system is calibrating."
+			D = "This will only take a moment."
 			cv2.putText(webcam.frame,A,(10,30),cv2.FONT_HERSHEY_SIMPLEX,0.9,(0,0,255),3)
 			cv2.putText(webcam.frame,B,(10,100),cv2.FONT_HERSHEY_SIMPLEX,0.9,(0,0,255),3)
 			cv2.putText(webcam.frame,C,(10,170),cv2.FONT_HERSHEY_SIMPLEX,0.9,(0,0,255),3)
@@ -191,23 +179,27 @@ class Calibration(object):
 				return [calradi, (caldx,caldy),(calx,caly)]
 				running = False
 
-class Ball(object):
-	def __init__(self,color,x=50,y=50,selected=False):
-		self.x = x
-		self.y = y
-		self.color = color
-		self.selected = selected
-	def select(self):
-		if self.selected == True:
-			self.x = cursor.x
-			self.y = cursor.y
-
-
 class DesktopModel(object):
 	"""Stores the fake desktop state"""
 	def __init__(self):
 		self.desktop = screen.fill(whiteColor)
 		pygame.display.update()
+
+class PygameView(object):
+	"""Visualizes a fake desktop in a pygame window"""
+	def __init__(self,model, screen):
+		"""Initialise the view with a specific model"""
+		self.model = model
+		self.screen = screen
+		redColor = pygame.Color(255,0,0)
+		greenColor = pygame.Color(0,255,0)
+		blueColor = pygame.Color(0,0,255)
+		whiteColor = pygame.Color(255,255,255)
+	def update(self):
+		"""Draw the game state to the screen"""
+		pygame.draw.circle(screen,ballcolor,(int(cursor.x),int(cursor.y)),20,0)
+		pygame.display.update()
+
 
 class Controller(object):
 	def __init__(self,model):
@@ -222,8 +214,10 @@ class Controller(object):
 				# if the event is for horizontal movement,
 				# we pop out the first value of the list of 
 				# dXs, then run the cursor function for horizontal movement
+
 				dX = dXs.pop(0)
 				cursor.MoveH(dX)
+
 				pygame.event.post(select_event)
 			elif event.type == GREENMOVEV:
 				# if the event is for vertical movement,
@@ -252,8 +246,8 @@ class Controller(object):
 				if x >= 400 and y >= 300:
 					print 'Grid 9'
 			elif event.type == SELECT:
-				ball.color=redColor
-				ball.selected = True
+				cursor.color = redColor
+				cursor.selected = True
 
 
 		pygame.event.clear()
@@ -291,8 +285,6 @@ if __name__ == '__main__':
 	#initialize stuff
 
 	running = True
-	ball = Ball(blueColor)
-	ball.selected = False
 	frame = 0
 	eventcount = 0
 	webcam = WebCam()
@@ -303,8 +295,8 @@ if __name__ == '__main__':
 	calibrate = Calibration()
 	[calradi,(caldx,caldy),(calx,caly)] = calibrate.startup(greenLower,greenUpper)
 
-	cursor = Mouse(calx,caly)
-	cursor.initialsetup()
+	cursor = Mouse(blueColor,calx,caly,False)
+	# cursor.initialsetup()
 
 	center = 0
 	counter = 0
@@ -345,7 +337,7 @@ if __name__ == '__main__':
 
 	while running:
 
-		pygame.draw.circle(screen,ballcolor,(int(ball.x),int(ball.y)),20,0)
+		# pygame.draw.circle(screen,ballcolor,(int(cursor.x),int(cursor.y)),20,0)
 		#Find the center of any green objects' contours
 
 		gotcenter = webcam.getcenter(greenLower, greenUpper)
