@@ -232,24 +232,25 @@ class Controller(object):
 				dY = dYs.pop(0)
 				cursor.MoveV(dY)
 				pygame.event.post(select_event)
-			elif event.type == GRID1:
-				print 'Grid 1'
-			elif event.type == GRID2:
-				print 'Grid 2'
-			elif event.type == GRID3:
-				print 'Grid 3'
-			elif event.type == GRID4:
-				print 'Grid 4'
-			elif event.type == GRID5:
-				print 'Grid 5'
-			# elif event.type == GRID6:
-			# 	print 'Grid 6'
-			# elif event.type == GRID7:
-			# 	print 'Grid 7'
-			# elif event.type == GRID8:
-			# 	print 'Grid 8'
-			# elif event.type == GRID9:
-			# 	print 'Grid 9'
+			elif event.type == GRID:
+				if x <= 200 and y <= 150:
+					print 'Grid 1'
+				if (x >= 200 and x <= 400) and y <=150:
+					print 'Grid 2'
+				if x >= 400 and y <= 150:
+					print 'Grid 3'
+				if x <= 200 and (y >= 150 and y <=300):
+					print 'Grid 4'
+				if (x >= 200 and x <= 400) and (y >= 150 and y <=300):
+					print 'Grid 5'
+				if x >= 400 and (y >= 150 and y <= 300):
+					print 'Grid 6'
+				if x <= 200 and y >= 300:
+					print 'Grid 7'
+				if (x >= 200 and x <= 400) and y >= 300:
+					print 'Grid 8'
+				if x >= 400 and y >= 300:
+					print 'Grid 9'
 			elif event.type == SELECT:
 				ball.color=redColor
 				ball.selected = True
@@ -272,8 +273,8 @@ if __name__ == '__main__':
 	whiteColor = pygame.Color(255,255,255)
 
 	#Set pygame fake desktop size
-	screenwidth= 1024
-	screenheight= 768
+	screenwidth= 600
+	screenheight= 450
 
 	size = (screenwidth, screenheight)
 	screen = pygame.display.set_mode(size)
@@ -323,29 +324,11 @@ if __name__ == '__main__':
 	SELECT = pygame.USEREVENT+3
 	select_event= pygame.event.Event(SELECT)
 
-	GRID1 = pygame.USEREVENT+4
-	grid1_event = pygame.event.Event(GRID1)
-	GRID2 = pygame.USEREVENT+5
-	grid2_event = pygame.event.Event(GRID2)
-	GRID3 = pygame.USEREVENT+6
-	grid3_event = pygame.event.Event(GRID3)
-	GRID4 = pygame.USEREVENT+7
-	grid4_event = pygame.event.Event(GRID4)
-	GRID5 = pygame.USEREVENT+8
-	grid5_event = pygame.event.Event(GRID5)
-	# GRID6 = pygame.USEREVENT+9
-	# grid6_event = pygame.event.Event(GRID6)
-	# GRID7 = pygame.USEREVENT+10
-	# grid7_event = pygame.event.Event(GRID7)
-	# GRID8 = pygame.USEREVENT+11
-	# grid8_event = pygame.event.Event(GRID8)
-	# GRID9 = pygame.USEREVENT+12
-	# grid9_event = pygame.event.Event(GRID9)
-
-# ,GRID3,GRID4,GRID5,GRID6,GRID7,GRID8,GRID9
+	GRID = pygame.USEREVENT+4
+	grid_event = pygame.event.Event(GRID)
 
 	# makes sure only the events we want are on the event queue
-	allowed_events = [GREENMOVEV,GREENMOVEH,QUIT,SELECT,GRID1,GRID2,GRID3,GRID4]
+	allowed_events = [GREENMOVEV,GREENMOVEH,QUIT,SELECT,GRID]
 	pygame.event.set_allowed(allowed_events)
 
 	buf = 10
@@ -391,25 +374,8 @@ if __name__ == '__main__':
 
 				(x,y) = center
 				print (x,y)
-				if x <= 200 and y <= 150:
-					pygame.event.post(grid1_event)
-				if (x >= 200 and x <= 400) and y <=150:
-					pygame.event.post(grid2_event)
-				if x >= 400 and y <= 150:
-					pygame.event.post(grid3_event)
-				if x <= 200 and (y >= 150 and y <=300):
-					pygame.event.post(grid4_event)
-				if (x >= 200 and x <= 400) and (y >= 150 and y <=300):
-					# pygame.event.post(grid5_event)
-					pygame.event.post(grid5_event)
-				# if x >= 400 and (y >= 150 and y <= 300):
-				# 	pygame.event.post(grid6_event)
-				# if x <= 200 and y >= 300:
-				# 	pygame.event.post(grid7_event)
-				# if (x >= 200 and x <= 400) and y >= 300:
-				# 	pygame.event.post(grid8_event)
-				# if x >= 400 and y >= 300:
-				# 	pygame.event.post(grid9_event)
+				if (x >= 0 and x <= 600) and (y >= 0 and y <= 450):
+					pygame.event.post(grid_event)
 
 		for i in range (1,len(webcam.pts)):
 			# ignoring tracked points that are None
@@ -457,4 +423,4 @@ if __name__ == '__main__':
 if running == False:
 		#release camera, close open windows
 		webcam.camera.release()
-		cv2.destroyAllWindows() 
+		cv2.destroyAllWindows()
