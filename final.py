@@ -35,7 +35,6 @@ class WebCam(object):
 		self.calrad = []
 		self.calcounter = counter
 
-
 	def getcenter(self, greenLower, greenUpper):
 		self.args = vars(self.ap.parse_args())
 
@@ -74,6 +73,33 @@ class WebCam(object):
 			else:
 				center = (int(M["m10"]/M["m00"]), int(M["m01"]/M["m00"]))
 				return [center,radius]
+	def update_webcam(self, center):
+		cv2.circle(webcam.frame,center,5,redColor, -1)
+
+		cv2.line(webcam.frame, (0,0), (0,450), redColor, 1)
+		cv2.line(webcam.frame, (200,0), (200,450), redColor, 1)
+		cv2.line(webcam.frame, (400,0), (400,450), redColor, 1)
+		cv2.line(webcam.frame, (600,0), (600,450), redColor, 1)
+
+		cv2.line(webcam.frame, (0,0), (600,0), redColor, 1)
+		cv2.line(webcam.frame, (0,150), (600,150), redColor, 1)
+		cv2.line(webcam.frame, (0,300), (600,300), redColor, 1)
+	def process_pts(self, caldx, caldy):
+		dsX=0
+		dsY=0
+		dX = self.pts[i-buf][0] - webcam.pts[i][0]
+		dY = self.pts[i-buf][1] - webcam.pts[i][1]
+		# if np.abs(dX) > 150:
+		# 	dXs.append(dX-caldx)
+		# 	pygame.event.post(moveH_event)
+		# if np.abs(dY) > 150:
+		# 	pygame.event.post(moveV_event)
+		# 	dYs.append(dY-caldy)
+
+		raddif = webcam.rad[i] - calradi
+
+		# if np.abs(raddif)> (1/2)*calradi:
+		# 	pygame.event.post(select_event)
 
 
 class Mouse(object):
@@ -84,26 +110,37 @@ class Mouse(object):
 		self.color = color
 		self.selected = selected
 
-	def select(self):
-		if self.selected == True:
-			self.x = cursor.x
-			self.y = cursor.y
-			self.color = redColor
-			
-	def MoveH(self,dY):
-		if 0 < (self.x - dX/300) < screenwidth:
-			self.x = self.x - (dX/100)
-		elif (self.x - dX/300) >= screenwidth:
-			self.x = screenwidth - 10
-		elif (self.x - dX/300) <= 0:
-			self.x = 10
-	def MoveV(self,dY):
-		if 0 < (self.y + dY/300) < screenheight:
-			self.y = self.y + (dX/100)
-		elif (self.y + dY/300)>= screenheight:
-			self.y = screenheight - 10
-		elif (self.y + dY/300) <= 0:
-			self.y = 10
+	def set_pos(self, x, y):
+		self.x = x
+		self.y = y
+		# self.color = redColor
+
+	def Move(self):
+		gotcenter = webcam.getcenter(greenLower, greenUpper)
+		if gotcenter == None:
+			pass
+		else:
+			center = gotcenter[0]
+            # radius = gotcenter[1]
+			self.x = center[0]
+			self.y = center[1]
+        # pygame.mouse.set_pos(self.x,self.y)
+		self.set_pos(self.x, self.y)
+
+	# def MoveH(self,dY):
+	# 	if 0 < (self.x - dX/300) < screenwidth:
+	# 		self.x = self.x - (dX/100)
+	# 	elif (self.x - dX/300) >= screenwidth:
+	# 		self.x = screenwidth - 10
+	# 	elif (self.x - dX/300) <= 0:
+	# 		self.x = 10
+	# def MoveV(self,dY):
+	# 	if 0 < (self.y + dY/300) < screenheight:
+	# 		self.y = self.y + (dX/100)
+	# 	elif (self.y + dY/300)>= screenheight:
+	# 		self.y = screenheight - 10
+	# 	elif (self.y + dY/300) <= 0:
+	# 		self.y = 10
 
 
 class Calibration(object):
@@ -111,7 +148,6 @@ class Calibration(object):
 	def __init__(self):
 		self=self
 	def startup(self,greenLower,greenUpper):
-
 		calibrating = True
 		count = 0
 		calradi = 0
@@ -133,10 +169,7 @@ class Calibration(object):
 			cv2.putText(webcam.frame,B,(10,100),cv2.FONT_HERSHEY_SIMPLEX,0.9,(0,0,255),3)
 			cv2.putText(webcam.frame,C,(10,170),cv2.FONT_HERSHEY_SIMPLEX,0.9,(0,0,255),3)
 			cv2.putText(webcam.frame,D,(10,240),cv2.FONT_HERSHEY_SIMPLEX,0.9,(0,0,255),3)
-			if califind == None:
-
-				pass
-			else:
+			if califind != None:
 				calicenter = califind[0]
 				caliradius = califind[1]
 
@@ -146,6 +179,7 @@ class Calibration(object):
 					webcam.calrad.append(caliradius)
 					webcam.calcounter = webcam.calcounter + 1
 					calcounter = webcam.calcounter
+
 			buf = 10
 			for i in range (1,len(webcam.calpts)):
 			# ignoring tracked points that are None
@@ -181,6 +215,7 @@ class Calibration(object):
 class DesktopModel(object):
 	"""Stores the fake desktop state"""
 	def __init__(self):
+
 		self.desktop = screen.fill(whiteColor)
 		pygame.display.update()
 
@@ -190,10 +225,6 @@ class PygameView(object):
 		"""Initialise the view with a specific model"""
 		self.model = model
 		self.screen = screen
-		redColor = pygame.Color(255,0,0)
-		greenColor = pygame.Color(0,255,0)
-		blueColor = pygame.Color(0,0,255)
-		whiteColor = pygame.Color(255,255,255)
 	def update(self):
 		"""Draw the game state to the screen"""
 		pygame.draw.circle(screen,ballcolor,(int(cursor.x),int(cursor.y)),20,0)
@@ -209,22 +240,22 @@ class Controller(object):
 			if event.type == QUIT:
 				pygame.quit()
 				sys.exit()
-			elif event.type == GREENMOVEH:
-				# if the event is for horizontal movement,
-				# we pop out the first value of the list of 
-				# dXs, then run the cursor function for horizontal movement
+			# elif event.type == GREENMOVEH:
+			# 	# if the event is for horizontal movement,
+			# 	# we pop out the first value of the list of 
+			# 	# dXs, then run the cursor function for horizontal movement
 
-				dX = dXs.pop(0)
-				cursor.MoveH(dX)
+			# 	dX = dXs.pop(0)
+			# 	cursor.MoveH(dX)
 
-				pygame.event.post(select_event)
-			elif event.type == GREENMOVEV:
-				# if the event is for vertical movement,
-				# we pop out the first value of the list of 
-				# dYs, then run the cursor function for vertical movement
-				dY = dYs.pop(0)
-				cursor.MoveV(dY)
-				pygame.event.post(select_event)
+			# 	pygame.event.post(select_event)
+			# elif event.type == GREENMOVEV:
+			# 	# if the event is for vertical movement,
+			# 	# we pop out the first value of the list of 
+			# 	# dYs, then run the cursor function for vertical movement
+			# 	dY = dYs.pop(0)
+			# 	cursor.MoveV(dY)
+			# 	pygame.event.post(select_event)
 			elif event.type == GRID:
 				if x <= 200 and y <= 150:
 					print 'Grid 1'
@@ -244,9 +275,9 @@ class Controller(object):
 					print 'Grid 8'
 				if x >= 400 and y >= 300:
 					print 'Grid 9'
-			elif event.type == SELECT:
-				cursor.color = redColor
-				cursor.selected = True
+			# elif event.type == SELECT:
+			# 	cursor.color = redColor
+			# 	cursor.selected = True
 
 
 		pygame.event.clear()
@@ -277,8 +308,6 @@ if __name__ == '__main__':
 	master = Controller(model)
 
 
-
-
 	"""WEBCAM STUFF"""
 
 	#initialize stuff
@@ -298,7 +327,6 @@ if __name__ == '__main__':
 	# cursor.initialsetup()
 
 	center = 0
-	counter = 0
 	calcounter = 0
 	(dX,dY) = (0,0)
 	dXs=[]
@@ -308,18 +336,19 @@ if __name__ == '__main__':
 	caldYs=[]
 
 	# Create new event for vertical and horizontal green movements
-	GREENMOVEH = pygame.USEREVENT+1
-	moveH_event= pygame.event.Event(GREENMOVEH)
-	GREENMOVEV = pygame.USEREVENT+2
-	moveV_event= pygame.event.Event(GREENMOVEV)
-	SELECT = pygame.USEREVENT+3
-	select_event= pygame.event.Event(SELECT)
+	# GREENMOVEH = pygame.USEREVENT+1
+	# moveH_event= pygame.event.Event(GREENMOVEH)
+	# GREENMOVEV = pygame.USEREVENT+2
+	# moveV_event= pygame.event.Event(GREENMOVEV)
+	# SELECT = pygame.USEREVENT+3
+	# select_event= pygame.event.Event(SELECT)
 
 	GRID = pygame.USEREVENT+4
 	grid_event = pygame.event.Event(GRID)
 
 	# makes sure only the events we want are on the event queue
-	allowed_events = [GREENMOVEV,GREENMOVEH,QUIT,SELECT,GRID]
+	# allowed_events = [GREENMOVEV,GREENMOVEH,QUIT,SELECT,GRID]
+	allowed_events = [QUIT,GRID]
 	pygame.event.set_allowed(allowed_events)
 
 	buf = 10
@@ -345,26 +374,18 @@ if __name__ == '__main__':
 		else:
 			center = gotcenter[0]
 			radius = gotcenter[1]
-			cv2.circle(webcam.frame,center,5,(0,0,255), -1)
-
-			cv2.line(webcam.frame, (0,0), (0,450), (255,0,0), 1)
-			cv2.line(webcam.frame, (200,0), (200,450), (255,0,0), 1)
-			cv2.line(webcam.frame, (400,0), (400,450), (255,0,0), 1)
-			cv2.line(webcam.frame, (600,0), (600,450), (255,0,0), 1)
-
-			cv2.line(webcam.frame, (0,0), (600,0), (255,0,0), 1)
-			cv2.line(webcam.frame, (0,150), (600,150), (255,0,0), 1)
-			cv2.line(webcam.frame, (0,300), (600,300), (255,0,0), 1)
+			webcam.update_webcam(center)
 
 			if radius > 20:
 				#if radius is above a certain size we count it
 				webcam.pts.append(center)
 				webcam.rad.append(radius)
 				webcam.counter = webcam.counter + 1
-				counter = webcam.counter
 
 				(x,y) = center
-				print (x,y)
+				cursor.set_pos(x,y)
+				# print (cursor.x,cursor.y)
+
 				if (x >= 0 and x <= 600) and (y >= 0 and y <= 450):
 					pygame.event.post(grid_event)
 
@@ -376,19 +397,7 @@ if __name__ == '__main__':
 			if webcam.counter >= buf and webcam.pts[i-buf] is not None:
 				#compute difference between x and y coordinates of the point and the point
 				#minimum buffer length before it
-				dsX=0
-				dsY=0
-				dX = webcam.pts[i-buf][0] - webcam.pts[i][0]
-				dY = webcam.pts[i-buf][1] - webcam.pts[i][1]
-				if np.abs(dX) > 150:
-					dXs.append(dX-caldx)
-					pygame.event.post(moveH_event)
-				if np.abs(dY) > 150:
-					pygame.event.post(moveV_event)
-					dYs.append(dY-caldy)
-				raddif = webcam.rad[i] - calradi
-				if np.abs(raddif)> (1/2)*calradi:
-					pygame.event.post(select_event)
+				webcam.process_pts(caldx,caldy)
 			#process the events in the queue
 			master.process_events()
 
