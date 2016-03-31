@@ -22,15 +22,17 @@ In a real Harry Potter duel, duelists wave their wands and say the name of the s
 
 ***************************************************************
 Key Questions:
-1. Given that an object is recognized using OpenCV, how do we retrieve those coordinates and use them to draw a line in pygame?
+1. Given that a moving object is recognized using OpenCV, how do we retrieve the object’s coordinates and use them to draw the exact same figure in pygame?
 	a. Are there more efficient ways to do this?
-	b. When a line is drawn in pygame, how do we make that trigger an action?
+	b. When a line is drawn in pygame, how do we make it trigger an action?
 2. The screen always seems to freeze after a few seconds. Why does it do that, and how do we make it not do that?
+3. Currently, after one of our quadrants is ‘triggered,’ it stays ‘triggered’ forever (or until a reset button is pushed). How do we implement a time delay feature that resets quadrants that haven’t been ‘triggered’ for a long time?
+
 
 
 ***************************************************************
 Agenda:
 1. Show slides, discuss background and context, answer any questions people may have.
 2. Discuss what we're doing-- we will each discuss what we've gotten done so far and the problems that we have encountered. During this discussion, we hope to get feedback on how to fix these problems.
-3. Ask the audience for any more feedback that they can give us. Is there anything fundamentally wrong with our idea?
-4. Give closing notes and thanking the audience!
+3. Ask the audience for any more feedback that they can give us. Is there anything fundamentally wrong with our idea? Do they have more fun ideas for us to pursue in our project?
+4. Give closing notes and thank the audience!

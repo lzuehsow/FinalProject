@@ -1,0 +1,12 @@
+From the technical review, we received a lot of really good feedback! Here is a summarized list of what we learned:
+  1. We should simplify our code so that it doesn't have to do so much. (This feedback was based on our demonstration of our project, which was terribly laggy and error-prone.) This can be accomplished in a variety of ways. For example...
+    a. Try just tracking where the majority of the green object (the controller) is
+    b. Track and record the controller's position every 0.25 seconds instead of continuously, then "connect the dots" between the tracked points
+    c. Instead of drawing with pygame, just light up a grid square when the controller is touching it.
+  2. We should try changing how the game is played. For example...
+    a. Limit the spell-casting time
+    b. Use voice recognition software, since this might be easier than using OpenCV
+
+We plan to incorporate most of this feedback in future iterations of our project. Voice recognition sounds like an interesting possibility, in particular-- but first, we will try to make our game work using just OpenCV and pygame. We have some questions about how to implement some of these suggestions, such as how to limit the spell-casting time and how to use voice recognition software.
+
+We were under the impression that we would be presenting to an instructor and another team, so we were a little unprepared for presenting to a large group of students. As a result, we felt that our presentation was a little shaky, although we managed to get feedback on everything that we had hoped to get feedback on. (We also checked with our instructor afterwards, and he assured us that we did fine.) Next time, we think it would be better if we provided a little more context about our project and about the actual gameplay. Our instructor noted that he would have preferred it if we had provided more context about how the game actually works and what happens when a spell is cast. Admittedly, we did not provide much information about this because at this point, we don't really know, either. However, in the next technical review, we should know more about where we are going with this project, and we should then be able to better inform our audience and demonstrate the gameplay.
