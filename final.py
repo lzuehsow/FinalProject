@@ -48,8 +48,8 @@ class WebCam(object):
 		blurred = cv2.GaussianBlur(self.frame,(11,11),0)
 		hsv = cv2.cvtColor(self.frame,cv2.COLOR_BGR2HSV)
 
-		#construct mask for "green", perform dialations and erosions
-		#to remove erronous parts of mask
+		#construct mask for "green", perform dilations and erosions
+		#to remove erroneous parts of mask
 		mask = cv2.inRange(hsv, greenLower, greenUpper)
 		mask = cv2.erode(mask,None,iterations=1)
 		mask = cv2.dilate(mask,None,iterations=1)
@@ -62,7 +62,7 @@ class WebCam(object):
 		if len(self.cnts) > 0:
 
 			#find largest contour in mask, use it to compute 
-			#minimum enclosing circel and centroid for that contour
+			#minimum enclosing circle and centroid for that contour
 
 			c = max(self.cnts,key=cv2.contourArea)
 			M = cv2.moments(c)
@@ -73,6 +73,7 @@ class WebCam(object):
 			else:
 				center = (int(M["m10"]/M["m00"]), int(M["m01"]/M["m00"]))
 				return [center,radius]
+
 	def update_webcam(self, center):
 		cv2.circle(webcam.frame,center,5,redColor, -1)
 
@@ -84,22 +85,12 @@ class WebCam(object):
 		cv2.line(webcam.frame, (0,0), (600,0), redColor, 1)
 		cv2.line(webcam.frame, (0,150), (600,150), redColor, 1)
 		cv2.line(webcam.frame, (0,300), (600,300), redColor, 1)
+
 	def process_pts(self, caldx, caldy):
 		dsX=0
 		dsY=0
 		dX = self.pts[i-buf][0] - webcam.pts[i][0]
 		dY = self.pts[i-buf][1] - webcam.pts[i][1]
-		# if np.abs(dX) > 150:
-		# 	dXs.append(dX-caldx)
-		# 	pygame.event.post(moveH_event)
-		# if np.abs(dY) > 150:
-		# 	pygame.event.post(moveV_event)
-		# 	dYs.append(dY-caldy)
-
-		raddif = webcam.rad[i] - calradi
-
-		# if np.abs(raddif)> (1/2)*calradi:
-		# 	pygame.event.post(select_event)
 
 
 class Mouse(object):
@@ -121,26 +112,9 @@ class Mouse(object):
 			pass
 		else:
 			center = gotcenter[0]
-            # radius = gotcenter[1]
 			self.x = center[0]
 			self.y = center[1]
-        # pygame.mouse.set_pos(self.x,self.y)
 		self.set_pos(self.x, self.y)
-
-	# def MoveH(self,dY):
-	# 	if 0 < (self.x - dX/300) < screenwidth:
-	# 		self.x = self.x - (dX/100)
-	# 	elif (self.x - dX/300) >= screenwidth:
-	# 		self.x = screenwidth - 10
-	# 	elif (self.x - dX/300) <= 0:
-	# 		self.x = 10
-	# def MoveV(self,dY):
-	# 	if 0 < (self.y + dY/300) < screenheight:
-	# 		self.y = self.y + (dX/100)
-	# 	elif (self.y + dY/300)>= screenheight:
-	# 		self.y = screenheight - 10
-	# 	elif (self.y + dY/300) <= 0:
-	# 		self.y = 10
 
 
 class Calibration(object):
@@ -215,9 +189,22 @@ class Calibration(object):
 class DesktopModel(object):
 	"""Stores the fake desktop state"""
 	def __init__(self):
-
 		self.desktop = screen.fill(whiteColor)
 		pygame.display.update()
+
+		self.grid1flag = False
+		self.grid2flag = False
+		self.grid3flag = False
+		self.grid4flag = False
+		self.grid5flag = False
+		self.grid6flag = False
+		self.grid7flag = False
+		self.grid8flag = False
+		self.grid9flag = False
+
+	def spell_check(self):
+		if self.grid1flag and self.grid2flag and self.grid3flag:
+			print 'Incendio!'
 
 class PygameView(object):
 	"""Visualizes a fake desktop in a pygame window"""
@@ -240,45 +227,35 @@ class Controller(object):
 			if event.type == QUIT:
 				pygame.quit()
 				sys.exit()
-			# elif event.type == GREENMOVEH:
-			# 	# if the event is for horizontal movement,
-			# 	# we pop out the first value of the list of 
-			# 	# dXs, then run the cursor function for horizontal movement
 
-			# 	dX = dXs.pop(0)
-			# 	cursor.MoveH(dX)
-
-			# 	pygame.event.post(select_event)
-			# elif event.type == GREENMOVEV:
-			# 	# if the event is for vertical movement,
-			# 	# we pop out the first value of the list of 
-			# 	# dYs, then run the cursor function for vertical movement
-			# 	dY = dYs.pop(0)
-			# 	cursor.MoveV(dY)
-			# 	pygame.event.post(select_event)
 			elif event.type == GRID:
 				if x <= 200 and y <= 150:
 					print 'Grid 1'
+					model.grid1flag = True
 				if (x >= 200 and x <= 400) and y <=150:
 					print 'Grid 2'
+					model.grid2flag = True
 				if x >= 400 and y <= 150:
 					print 'Grid 3'
+					model.grid3flag = True
 				if x <= 200 and (y >= 150 and y <=300):
 					print 'Grid 4'
+					model.grid4flag = True
 				if (x >= 200 and x <= 400) and (y >= 150 and y <=300):
 					print 'Grid 5'
+					model.grid5flag = True
 				if x >= 400 and (y >= 150 and y <= 300):
 					print 'Grid 6'
+					model.grid6flag = True
 				if x <= 200 and y >= 300:
 					print 'Grid 7'
+					model.grid7flag = True
 				if (x >= 200 and x <= 400) and y >= 300:
 					print 'Grid 8'
+					model.grid8flag = True
 				if x >= 400 and y >= 300:
 					print 'Grid 9'
-			# elif event.type == SELECT:
-			# 	cursor.color = redColor
-			# 	cursor.selected = True
-
+					model.grid9flag = True
 
 		pygame.event.clear()
 
@@ -335,19 +312,10 @@ if __name__ == '__main__':
 	caldXs=[]
 	caldYs=[]
 
-	# Create new event for vertical and horizontal green movements
-	# GREENMOVEH = pygame.USEREVENT+1
-	# moveH_event= pygame.event.Event(GREENMOVEH)
-	# GREENMOVEV = pygame.USEREVENT+2
-	# moveV_event= pygame.event.Event(GREENMOVEV)
-	# SELECT = pygame.USEREVENT+3
-	# select_event= pygame.event.Event(SELECT)
-
-	GRID = pygame.USEREVENT+4
+	GRID = pygame.USEREVENT+2
 	grid_event = pygame.event.Event(GRID)
 
 	# makes sure only the events we want are on the event queue
-	# allowed_events = [GREENMOVEV,GREENMOVEH,QUIT,SELECT,GRID]
 	allowed_events = [QUIT,GRID]
 	pygame.event.set_allowed(allowed_events)
 
@@ -364,6 +332,8 @@ if __name__ == '__main__':
 	ballcolor = random.randint(0,255)
 
 	while running:
+		#Check for spells
+		model.spell_check()
 
 		# pygame.draw.circle(screen,ballcolor,(int(cursor.x),int(cursor.y)),20,0)
 		#Find the center of any green objects' contours
@@ -413,9 +383,16 @@ if __name__ == '__main__':
 		time.sleep(.001)
 		if key == ord("q"):
 			break
-		if key == ord("s"):
-			cursor.x = calx
-			cursor.y = caly
+		if key == ord("c"):
+			model.grid1flag = False
+			model.grid2flag = False
+			model.grid3flag = False
+			model.grid4flag = False
+			model.grid5flag = False
+			model.grid6flag = False
+			model.grid7flag = False
+			model.grid8flag = False
+			model.grid9flag = False
 		if frame > 500:
 			pygame.quit
 			sys.exit()
