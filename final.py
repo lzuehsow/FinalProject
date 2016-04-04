@@ -203,8 +203,21 @@ class DesktopModel(object):
 		self.grid9flag = False
 
 	def spell_check(self):
-		if self.grid1flag and self.grid2flag and self.grid3flag:
+		if self.grid1flag and self.grid2flag and self.grid3flag and (spell_frame < 10):
 			print 'Incendio!'
+			return True
+		else:
+			return False
+	def spell_clear(self):
+		model.grid1flag = False
+		model.grid2flag = False
+		model.grid3flag = False
+		model.grid4flag = False
+		model.grid5flag = False
+		model.grid6flag = False
+		model.grid7flag = False
+		model.grid8flag = False
+		model.grid9flag = False
 
 class PygameView(object):
 	"""Visualizes a fake desktop in a pygame window"""
@@ -214,7 +227,7 @@ class PygameView(object):
 		self.screen = screen
 	def update(self):
 		"""Draw the game state to the screen"""
-		pygame.draw.circle(screen,ballcolor,(int(cursor.x),int(cursor.y)),20,0)
+		pygame.draw.circle(screen,cursor.color,(int(cursor.x),int(cursor.y)),20,0)
 		pygame.display.update()
 
 
@@ -329,11 +342,17 @@ if __name__ == '__main__':
 	"""RUNTIME LOOP"""
 
 	#This is the main loop of the program. 
-	ballcolor = random.randint(0,255)
+	spell_frame = 0
 
 	while running:
+		# print spell_frame
+
 		#Check for spells
-		model.spell_check()
+		if model.spell_check(): #if a spell is detected, add one to spell frame count
+			spell_frame += 1
+		elif spell_frame >= 10: #if a spell has finished firing, reset spell frame counter and clear all grid flags.
+			model.spell_clear()
+			spell_frame = 0
 
 		# pygame.draw.circle(screen,ballcolor,(int(cursor.x),int(cursor.y)),20,0)
 		#Find the center of any green objects' contours
@@ -384,15 +403,7 @@ if __name__ == '__main__':
 		if key == ord("q"):
 			break
 		if key == ord("c"):
-			model.grid1flag = False
-			model.grid2flag = False
-			model.grid3flag = False
-			model.grid4flag = False
-			model.grid5flag = False
-			model.grid6flag = False
-			model.grid7flag = False
-			model.grid8flag = False
-			model.grid9flag = False
+			model.spell_clear()
 		if frame > 500:
 			pygame.quit
 			sys.exit()
