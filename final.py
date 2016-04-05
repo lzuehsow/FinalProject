@@ -262,15 +262,14 @@ class PygameView(object):
 		self.sprite = pygame.image.load(sprite).convert_alpha()
 
 		self.explosion = pygame.image.load(explosion).convert_alpha()
-		self.explosion = pygame.transform.scale(self.explosion, (20,20))
+		self.explosion = pygame.transform.scale(self.explosion, (100,100))
 
 		pygame.display.update()
 
 	def update(self):
 		"""Draw the game state to the screen"""
-
-		if model.spell_check and (spell_frame <= 10):
-			screen.blit(self.explosion,(enemy.x,enemy.y))
+		if model.spell_check() and (spell_frame <= 10):
+			screen.blit(self.explosion,(enemy.x + 200,enemy.y + 150))
 		else:
 			screen.blit(self.sprite,(enemy.x,enemy.y))
 		# pygame.draw.circle(screen,cursor.color,(int(cursor.x),int(cursor.y)),20,0)
@@ -459,6 +458,7 @@ if __name__ == '__main__':
 			pygame.quit
 			sys.exit()
 			break
+
 if running == False:
 		#release camera, close open windows
 		webcam.camera.release()
