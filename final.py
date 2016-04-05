@@ -92,39 +92,6 @@ class WebCam(object):
 		dX = self.pts[i-buf][0] - webcam.pts[i][0]
 		dY = self.pts[i-buf][1] - webcam.pts[i][1]
 
-
-class Mouse(object):
-	"""Represents your spell trail"""
-	def __init__(self,color,x=50,y=50,selected=False):
-		self.x = x
-		self.y = y
-		self.color = color
-		self.selected = selected
-
-	def set_pos(self, x, y):
-		self.x = x
-		self.y = y
-		# self.color = redColor
-
-	def Move(self):
-		gotcenter = webcam.getcenter(greenLower, greenUpper)
-		if gotcenter == None:
-			pass
-		else:
-			center = gotcenter[0]
-			self.x = center[0]
-			self.y = center[1]
-		self.set_pos(self.x, self.y)
-
-class Enemy(object):
-	"""Represents your opponent"""
-	def __init__(self,x,y):
-		self.x = x
-		self.y = y
-	def Move(self, newx, newy):
-		self.x = newx
-		self.y = newy
-
 class Calibration(object):
 	"""Performs calibration of the 'green thing' and represents the calibrated original "green object" """
 	def __init__(self):
@@ -194,6 +161,43 @@ class Calibration(object):
 				return [calradi, (caldx,caldy),(calx,caly)]
 				running = False
 
+
+class Mouse(object):
+	"""Represents your spell trail"""
+	def __init__(self,color,x=50,y=50,selected=False):
+		self.x = x
+		self.y = y
+		self.color = color
+		self.selected = selected
+
+	def set_pos(self, x, y):
+		self.x = x
+		self.y = y
+		# self.color = redColor
+
+	def Move(self):
+		gotcenter = webcam.getcenter(greenLower, greenUpper)
+		if gotcenter == None:
+			pass
+		else:
+			center = gotcenter[0]
+			self.x = center[0]
+			self.y = center[1]
+		self.set_pos(self.x, self.y)
+
+class Enemy(object):
+	"""Represents your opponent"""
+	def __init__(self,x,y):
+		self.x = x
+		self.y = y
+		self.hp = 100
+	def Move(self, newx, newy):
+		self.x = newx
+		self.y = newy
+	def DamageTaken(self,dmg):
+		self.hp = self.hp - dmg
+
+
 class DesktopModel(object):
 	"""Stores the fake desktop state"""
 	def __init__(self):
@@ -212,11 +216,9 @@ class DesktopModel(object):
 
 	def spell_check(self):
 		if self.grid1flag and self.grid4flag and self.grid7flag and self.grid8flag and self.grid9flag and self.grid6flag and self.grid3flag and (self.grid2flag == False) and (self.grid5flag == False) and (spell_frame <= 10):
-			print 'Incendio!'
-			return True
-
-		elif self.grid2flag and self.grid5flag and self.grid4flag and self.grid8flag and self.grid6flag and self.grid1flag == False and self.grid3flag == False and self.grid7flag == False and self.grid9flag == False and (spell_frame <= 10):
-			print 'Avada kedavra!'
+			if spell_frame == 1:
+				print 'Incendio!'
+				enemy.hp = enemy.hp - 50
 			return True
 
 		elif self.grid2flag and self.grid5flag and self.grid8flag and self.grid1flag == False and self.grid3flag == False and self.grid4flag == False and self.grid6flag == False and self.grid7flag == False and self.grid9flag == False and (spell_frame <= 10):
@@ -224,16 +226,26 @@ class DesktopModel(object):
 			return True
 
 		elif self.grid1flag and self.grid4flag and self.grid7flag and self.grid2flag == False and self.grid3flag == False and self.grid5flag == False and self.grid6flag == False and self.grid8flag == False and self.grid9flag == False and (spell_frame <= 10):
-			print 'Flipendo!'
+			if spell_frame == 1:
+				print 'Flipendo!'
+				enemy.hp = enemy.hp - 25
+			return True
+
+		elif self.grid2flag and self.grid5flag and self.grid4flag and self.grid8flag and self.grid6flag and self.grid1flag == False and self.grid3flag == False and self.grid7flag == False and self.grid9flag == False and (spell_frame <= 10):
+			print 'Avada kedavra!'
+			# Gameover screen
 			return True
 
 		elif self.grid1flag and self.grid4flag and self.grid5flag and self.grid6flag and self.grid9flag and self.grid2flag == False and self.grid3flag == False and self.grid7flag == False and self.grid8flag == False and (spell_frame <= 10):
 			print 'Stupefy!'
+			# Gameover screen
 			return True
 
 		elif self.grid1flag and self.grid4flag and self.grid7flag and self.grid5flag and self.grid3flag and self.grid6flag and self.grid9flag and self.grid2flag == False and self.grid8flag == False and (spell_frame <= 10):
 			print 'Expelliarmus!'
+			# Gameover screen
 			return True
+
 		else:
 			return False
 
@@ -255,24 +267,38 @@ class PygameView(object):
 		self.model = model
 		self.screen = screen.fill(whiteColor)
 
+		# Load background png and post to screen
 		background = pygame.image.load(background).convert()
 		background = pygame.transform.scale(background, (screenwidth,screenheight))
 		screen.blit(background,(0,0))
 
+		# Load enemy sprite png
 		self.sprite = pygame.image.load(sprite).convert_alpha()
 
+		# Load spell damage animation png
 		self.explosion = pygame.image.load(explosion).convert_alpha()
 		self.explosion = pygame.transform.scale(self.explosion, (250,250))
 
+		# Enemy HP bar
+		screen.fill((0,255,0),Rect(10,10,100,20))
+
+		# Update game display
 		pygame.display.update()
 
 	def update(self):
 		"""Draw the game state to the screen"""
+		print enemy.hp
 
+		# Enemy spell damage animation
 		if model.spell_check() and (spell_frame <= 10):
 			screen.blit(self.explosion,(enemy.x + 200,enemy.y + 150))
 		else:
 			screen.blit(self.sprite,(enemy.x,enemy.y))
+
+		# Enemy HP bar
+		if model.spell_check() and (spell_frame == 1):
+			screen.fill((255,0,0),Rect(10,10,(100 - enemy.hp),20))
+
 		# pygame.draw.circle(screen,cursor.color,(int(cursor.x),int(cursor.y)),20,0)
 		pygame.display.update()
 
