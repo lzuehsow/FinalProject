@@ -211,27 +211,27 @@ class DesktopModel(object):
 		self.grid9flag = False
 
 	def spell_check(self):
-		if self.grid1flag and self.grid4flag and self.grid7flag and self.grid8flag and self.grid9flag and self.grid6flag and self.grid3flag and (self.grid2flag == False) and (self.grid5flag == False) and (spell_frame < 10):
+		if self.grid1flag and self.grid4flag and self.grid7flag and self.grid8flag and self.grid9flag and self.grid6flag and self.grid3flag and (self.grid2flag == False) and (self.grid5flag == False) and (spell_frame <= 10):
 			print 'Incendio!'
 			return True
 
-		elif self.grid2flag and self.grid5flag and self.grid4flag and self.grid8flag and self.grid6flag and self.grid1flag == False and self.grid3flag == False and self.grid7flag == False and self.grid9flag == False and (spell_frame < 10):
+		elif self.grid2flag and self.grid5flag and self.grid4flag and self.grid8flag and self.grid6flag and self.grid1flag == False and self.grid3flag == False and self.grid7flag == False and self.grid9flag == False and (spell_frame <= 10):
 			print 'Avada kedavra!'
 			return True
 
-		elif self.grid2flag and self.grid5flag and self.grid8flag and self.grid1flag == False and self.grid3flag == False and self.grid4flag == False and self.grid6flag == False and self.grid7flag == False and self.grid9flag == False and (spell_frame < 10):
+		elif self.grid2flag and self.grid5flag and self.grid8flag and self.grid1flag == False and self.grid3flag == False and self.grid4flag == False and self.grid6flag == False and self.grid7flag == False and self.grid9flag == False and (spell_frame <= 10):
 			print 'Wingardium leviosa!'
 			return True
 
-		elif self.grid1flag and self.grid4flag and self.grid7flag and self.grid2flag == False and self.grid3flag == False and self.grid5flag == False and self.grid6flag == False and self.grid8flag == False and self.grid9flag == False and (spell_frame < 10):
+		elif self.grid1flag and self.grid4flag and self.grid7flag and self.grid2flag == False and self.grid3flag == False and self.grid5flag == False and self.grid6flag == False and self.grid8flag == False and self.grid9flag == False and (spell_frame <= 10):
 			print 'Flipendo!'
 			return True
 
-		elif self.grid1flag and self.grid4flag and self.grid5flag and self.grid6flag and self.grid9flag and self.grid2flag == False and self.grid3flag == False and self.grid7flag == False and self.grid8flag == False and (spell_frame < 10):
+		elif self.grid1flag and self.grid4flag and self.grid5flag and self.grid6flag and self.grid9flag and self.grid2flag == False and self.grid3flag == False and self.grid7flag == False and self.grid8flag == False and (spell_frame <= 10):
 			print 'Stupefy!'
 			return True
 
-		elif self.grid1flag and self.grid4flag and self.grid7flag and self.grid5flag and self.grid3flag and self.grid6flag and self.grid9flag and self.grid2flag == False and self.grid8flag == False and (spell_frame < 10):
+		elif self.grid1flag and self.grid4flag and self.grid7flag and self.grid5flag and self.grid3flag and self.grid6flag and self.grid9flag and self.grid2flag == False and self.grid8flag == False and (spell_frame <= 10):
 			print 'Expelliarmus!'
 			return True
 		else:
@@ -262,12 +262,13 @@ class PygameView(object):
 		self.sprite = pygame.image.load(sprite).convert_alpha()
 
 		self.explosion = pygame.image.load(explosion).convert_alpha()
-		self.explosion = pygame.transform.scale(self.explosion, (100,100))
+		self.explosion = pygame.transform.scale(self.explosion, (250,250))
 
 		pygame.display.update()
 
 	def update(self):
 		"""Draw the game state to the screen"""
+
 		if model.spell_check() and (spell_frame <= 10):
 			screen.blit(self.explosion,(enemy.x + 200,enemy.y + 150))
 		else:
@@ -390,7 +391,6 @@ if __name__ == '__main__':
 	spell_frame = 0
 
 	while running:
-		# print spell_frame
 
 		# Check for spells
 		if model.spell_check(): #if a spell is detected, add one to spell frame count
