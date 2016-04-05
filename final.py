@@ -94,7 +94,7 @@ class WebCam(object):
 
 
 class Mouse(object):
-	"""Represents the mouse cursor"""
+	"""Represents your spell trail"""
 	def __init__(self,color,x=50,y=50,selected=False):
 		self.x = x
 		self.y = y
@@ -116,6 +116,14 @@ class Mouse(object):
 			self.y = center[1]
 		self.set_pos(self.x, self.y)
 
+class Enemy(object):
+	"""Represents your opponent"""
+	def __init__(self,x,y):
+		self.x = x
+		self.y = y
+	def Move(self, newx, newy):
+		self.x = newx
+		self.y = newy
 
 class Calibration(object):
 	"""Performs calibration of the 'green thing' and represents the calibrated original "green object" """
@@ -189,8 +197,8 @@ class Calibration(object):
 class DesktopModel(object):
 	"""Stores the fake desktop state"""
 	def __init__(self):
-		self.desktop = screen.fill(whiteColor)
-		pygame.display.update()
+		# self.desktop = screen.fill(whiteColor)
+		# pygame.display.update()
 
 		self.grid1flag = False
 		self.grid2flag = False
@@ -203,11 +211,32 @@ class DesktopModel(object):
 		self.grid9flag = False
 
 	def spell_check(self):
-		if self.grid1flag and self.grid2flag and self.grid3flag and (spell_frame < 10):
+		if self.grid1flag and self.grid4flag and self.grid7flag and self.grid8flag and self.grid9flag and self.grid6flag and self.grid3flag and (self.grid2flag == False) and (self.grid5flag == False) and (spell_frame < 10):
 			print 'Incendio!'
+			return True
+
+		elif self.grid2flag and self.grid5flag and self.grid4flag and self.grid8flag and self.grid6flag and self.grid1flag == False and self.grid3flag == False and self.grid7flag == False and self.grid9flag == False and (spell_frame < 10):
+			print 'Avada kedavra!'
+			return True
+
+		elif self.grid2flag and self.grid5flag and self.grid8flag and self.grid1flag == False and self.grid3flag == False and self.grid4flag == False and self.grid6flag == False and self.grid7flag == False and self.grid9flag == False and (spell_frame < 10):
+			print 'Wingardium leviosa!'
+			return True
+
+		elif self.grid1flag and self.grid4flag and self.grid7flag and self.grid2flag == False and self.grid3flag == False and self.grid5flag == False and self.grid6flag == False and self.grid8flag == False and self.grid9flag == False and (spell_frame < 10):
+			print 'Flipendo!'
+			return True
+
+		elif self.grid1flag and self.grid4flag and self.grid5flag and self.grid6flag and self.grid9flag and self.grid2flag == False and self.grid3flag == False and self.grid7flag == False and self.grid8flag == False and (spell_frame < 10):
+			print 'Stupefy!'
+			return True
+
+		elif self.grid1flag and self.grid4flag and self.grid7flag and self.grid5flag and self.grid3flag and self.grid6flag and self.grid9flag and self.grid2flag == False and self.grid8flag == False and (spell_frame < 10):
+			print 'Expelliarmus!'
 			return True
 		else:
 			return False
+
 	def spell_clear(self):
 		model.grid1flag = False
 		model.grid2flag = False
@@ -221,13 +250,30 @@ class DesktopModel(object):
 
 class PygameView(object):
 	"""Visualizes a fake desktop in a pygame window"""
-	def __init__(self,model, screen):
+	def __init__(self,model,screen,background, sprite, explosion):
 		"""Initialise the view with a specific model"""
 		self.model = model
-		self.screen = screen
+		self.screen = screen.fill(whiteColor)
+
+		background = pygame.image.load(background).convert()
+		background = pygame.transform.scale(background, (screenwidth,screenheight))
+		screen.blit(background,(0,0))
+
+		self.sprite = pygame.image.load(sprite).convert_alpha()
+
+		self.explosion = pygame.image.load(explosion).convert_alpha()
+		self.explosion = pygame.transform.scale(self.explosion, (20,20))
+
+		pygame.display.update()
+
 	def update(self):
 		"""Draw the game state to the screen"""
-		pygame.draw.circle(screen,cursor.color,(int(cursor.x),int(cursor.y)),20,0)
+
+		if model.spell_check and (spell_frame <= 10):
+			screen.blit(self.explosion,(enemy.x,enemy.y))
+		else:
+			screen.blit(self.sprite,(enemy.x,enemy.y))
+		# pygame.draw.circle(screen,cursor.color,(int(cursor.x),int(cursor.y)),20,0)
 		pygame.display.update()
 
 
@@ -243,31 +289,31 @@ class Controller(object):
 
 			elif event.type == GRID:
 				if x <= 200 and y <= 150:
-					print 'Grid 1'
+					# print 'Grid 1'
 					model.grid1flag = True
 				if (x >= 200 and x <= 400) and y <=150:
-					print 'Grid 2'
+					# print 'Grid 2'
 					model.grid2flag = True
 				if x >= 400 and y <= 150:
-					print 'Grid 3'
+					# print 'Grid 3'
 					model.grid3flag = True
 				if x <= 200 and (y >= 150 and y <=300):
-					print 'Grid 4'
+					# print 'Grid 4'
 					model.grid4flag = True
 				if (x >= 200 and x <= 400) and (y >= 150 and y <=300):
-					print 'Grid 5'
+					# print 'Grid 5'
 					model.grid5flag = True
 				if x >= 400 and (y >= 150 and y <= 300):
-					print 'Grid 6'
+					# print 'Grid 6'
 					model.grid6flag = True
 				if x <= 200 and y >= 300:
-					print 'Grid 7'
+					# print 'Grid 7'
 					model.grid7flag = True
 				if (x >= 200 and x <= 400) and y >= 300:
-					print 'Grid 8'
+					# print 'Grid 8'
 					model.grid8flag = True
 				if x >= 400 and y >= 300:
-					print 'Grid 9'
+					# print 'Grid 9'
 					model.grid9flag = True
 
 		pygame.event.clear()
@@ -277,7 +323,7 @@ if __name__ == '__main__':
 
 	"""Initializing"""
 
-	#Initialize pygame
+	# Initialize pygame
 	pygame.init()
 
 	# Define some colors
@@ -286,7 +332,7 @@ if __name__ == '__main__':
 	blueColor = pygame.Color(0,0,255)
 	whiteColor = pygame.Color(255,255,255)
 
-	#Set pygame fake desktop size
+	# Set pygame fake desktop size
 	screenwidth= 600
 	screenheight= 450
 
@@ -294,9 +340,8 @@ if __name__ == '__main__':
 	screen = pygame.display.set_mode(size)
 
 	model = DesktopModel()
-	view = PygameView(model, screen)
+	view = PygameView(model, screen, 'forbiddenforest.jpeg', 'volde.png', 'flame.png')
 	master = Controller(model)
-
 
 	"""WEBCAM STUFF"""
 
@@ -314,6 +359,7 @@ if __name__ == '__main__':
 	[calradi,(caldx,caldy),(calx,caly)] = calibrate.startup(greenLower,greenUpper)
 
 	cursor = Mouse(blueColor,calx,caly,False)
+	enemy = Enemy(25, 100)
 	# cursor.initialsetup()
 
 	center = 0
@@ -341,18 +387,23 @@ if __name__ == '__main__':
 
 	"""RUNTIME LOOP"""
 
-	#This is the main loop of the program. 
+	# This is the main loop of the program. 
 	spell_frame = 0
 
 	while running:
 		# print spell_frame
 
-		#Check for spells
+		# Check for spells
 		if model.spell_check(): #if a spell is detected, add one to spell frame count
 			spell_frame += 1
-		elif spell_frame >= 10: #if a spell has finished firing, reset spell frame counter and clear all grid flags.
+
+		if spell_frame <= 10: #if a spell has finished firing, reset spell frame counter and clear all grid flags.
+			pass
+		else:
 			model.spell_clear()
 			spell_frame = 0
+
+		# print model.store_flags
 
 		# pygame.draw.circle(screen,ballcolor,(int(cursor.x),int(cursor.y)),20,0)
 		#Find the center of any green objects' contours
@@ -412,3 +463,55 @@ if running == False:
 		#release camera, close open windows
 		webcam.camera.release()
 		cv2.destroyAllWindows()
+
+
+# print model.store_flags
+
+	# def list_grids(self, store):
+	# 	if x <= 200 and y <= 150:
+	# 		current_grid = 1
+	# 		if current_grid != store[-1]:
+	# 			store.append(current_grid)
+	# 	if (x >= 200 and x <= 400) and y <=150:
+	# 		current_grid = 2
+	# 		if current_grid != store[-1]:
+	# 			store.append(current_grid)
+	# 	if x >= 400 and y <= 150:
+	# 		current_grid = 3
+	# 		if current_grid != store[-1]:
+	# 			store.append(current_grid)
+	# 	if x <= 200 and (y >= 150 and y <=300):
+	# 		current_grid = 4
+	# 		if current_grid != store[-1]:
+	# 			store.append(current_grid)
+	# 	if (x >= 200 and x <= 400) and (y >= 150 and y <=300):
+	# 		current_grid = 5
+	# 		if current_grid != store[-1]:
+	# 			store.append(current_grid)
+	# 	if x >= 400 and (y >= 150 and y <= 300):
+	# 		current_grid = 6
+	# 		if current_grid != store[-1]:
+	# 			store.append(current_grid)
+	# 	if x <= 200 and y >= 300:
+	# 		current_grid = 7
+	# 		if current_grid != store[-1]:
+	# 			store.append(current_grid)
+	# 	if (x >= 200 and x <= 400) and y >= 300:
+	# 		current_grid = 8
+	# 		if current_grid != store[-1]:
+	# 			store.append(current_grid)
+	# 	if x >= 400 and y >= 300:
+	# 		current_grid = 9
+	# 		if current_grid != store[-1]:
+	# 			store.append(current_grid)
+
+	# def store_flags(self):
+	# 	store = []
+
+	# 	if event.type == GRID:
+	# 		if len(store) <= 4:
+	# 			list_grids(store)
+	# 		else:
+	# 			store.remove(store[0])
+	# 			list_grids(store)
+	# 	return store 
