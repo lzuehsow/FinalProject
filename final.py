@@ -191,6 +191,7 @@ class Enemy(object):
 		self.x = x
 		self.y = y
 		self.hp = 100
+		self.hit = False
 	def Move(self, newx, newy):
 		self.x = newx
 		self.y = newy
@@ -218,36 +219,54 @@ class DesktopModel(object):
 		if self.grid1flag and self.grid4flag and self.grid7flag and self.grid8flag and self.grid9flag and self.grid6flag and self.grid3flag and (self.grid2flag == False) and (self.grid5flag == False) and (spell_frame <= 10):
 			if spell_frame == 1:
 				print 'Incendio!'
-				enemy.hp = enemy.hp - 50
-			return True
+				enemy.DamageTaken(50)
+			enemy.hit = True
+			# return True
+			return
 
 		elif self.grid2flag and self.grid5flag and self.grid8flag and self.grid1flag == False and self.grid3flag == False and self.grid4flag == False and self.grid6flag == False and self.grid7flag == False and self.grid9flag == False and (spell_frame <= 10):
-			print 'Wingardium leviosa!'
-			return True
+			if spell_frame == 1:
+				print 'Wingardium leviosa!'
+				enemy.DamageTaken(25)
+			enemy.hit = True
+			return
 
 		elif self.grid1flag and self.grid4flag and self.grid7flag and self.grid2flag == False and self.grid3flag == False and self.grid5flag == False and self.grid6flag == False and self.grid8flag == False and self.grid9flag == False and (spell_frame <= 10):
 			if spell_frame == 1:
 				print 'Flipendo!'
-				enemy.hp = enemy.hp - 25
-			return True
+				enemy.DamageTaken(25)
+			enemy.hit = True
+			return
 
 		elif self.grid2flag and self.grid5flag and self.grid4flag and self.grid8flag and self.grid6flag and self.grid1flag == False and self.grid3flag == False and self.grid7flag == False and self.grid9flag == False and (spell_frame <= 10):
-			print 'Avada kedavra!'
+			if spell_frame == 1:
+				print 'Avada kedavra!'
+				enemy.DamageTaken(100)
+			enemy.hit = True
 			# Gameover screen
-			return True
+			# return True
+			return
 
 		elif self.grid1flag and self.grid4flag and self.grid5flag and self.grid6flag and self.grid9flag and self.grid2flag == False and self.grid3flag == False and self.grid7flag == False and self.grid8flag == False and (spell_frame <= 10):
-			print 'Stupefy!'
+			if spell_frame == 1:
+				print 'Stupefy!'
+				enemy.DamageTaken(100)
+			enemy.hit = True
 			# Gameover screen
-			return True
+			# return True
+			return
 
 		elif self.grid1flag and self.grid4flag and self.grid7flag and self.grid5flag and self.grid3flag and self.grid6flag and self.grid9flag and self.grid2flag == False and self.grid8flag == False and (spell_frame <= 10):
-			print 'Expelliarmus!'
+			if spell_frame == 1:
+				print 'Expelliarmus!'
+				enemy.DamageTaken(100)
+			enemy.hit = True
 			# Gameover screen
-			return True
+			# return True
+			return
 
 		else:
-			return False
+			enemy.hit = False
 
 	def spell_clear(self):
 		model.grid1flag = False
@@ -262,7 +281,7 @@ class DesktopModel(object):
 
 class PygameView(object):
 	"""Visualizes a fake desktop in a pygame window"""
-	def __init__(self,model,screen,background, sprite, explosion):
+	def __init__(self,model,screen,background, winscreen, sprite, explosion):
 		"""Initialise the view with a specific model"""
 		self.model = model
 		self.screen = screen.fill(whiteColor)
@@ -271,6 +290,10 @@ class PygameView(object):
 		background = pygame.image.load(background).convert()
 		background = pygame.transform.scale(background, (screenwidth,screenheight))
 		screen.blit(background,(0,0))
+
+		# Lead Gamewin png
+		self.winscreen = pygame.image.load(winscreen).convert()
+		self.winscreen = pygame.transform.scale(self.winscreen, (screenwidth,screenheight))
 
 		# Load enemy sprite png
 		self.sprite = pygame.image.load(sprite).convert_alpha()
@@ -290,17 +313,20 @@ class PygameView(object):
 		print enemy.hp
 
 		# Enemy spell damage animation
-		if model.spell_check() and (spell_frame <= 10):
+		if enemy.hit and (spell_frame <= 10):
 			screen.blit(self.explosion,(enemy.x + 200,enemy.y + 150))
 		else:
 			screen.blit(self.sprite,(enemy.x,enemy.y))
 
 		# Enemy HP bar
-		if model.spell_check() and (spell_frame == 1):
-			screen.fill((255,0,0),Rect(10,10,(100 - enemy.hp),20))
+		if enemy.hit and (spell_frame == 1):
+			screen.fill((255,0,0),Rect(10,10,(125 - enemy.hp),20))
 
 		# pygame.draw.circle(screen,cursor.color,(int(cursor.x),int(cursor.y)),20,0)
 		pygame.display.update()
+
+	def wongame(self):
+		screen.blit(self.winscreen,(0,0))
 
 
 class Controller(object):
@@ -366,7 +392,7 @@ if __name__ == '__main__':
 	screen = pygame.display.set_mode(size)
 
 	model = DesktopModel()
-	view = PygameView(model, screen, 'forbiddenforest.jpeg', 'volde.png', 'flame.png')
+	view = PygameView(model, screen, 'forbiddenforest.jpeg', 'win.png', 'volde.png', 'flame.png')
 	master = Controller(model)
 
 	"""WEBCAM STUFF"""
@@ -417,9 +443,14 @@ if __name__ == '__main__':
 	spell_frame = 0
 
 	while running:
+		if enemy.hp <= 0:
+			# enemy.hit = False
+			view.wongame()
+		else:
+			model.spell_check()
 
 		# Check for spells
-		if model.spell_check(): #if a spell is detected, add one to spell frame count
+		if enemy.hit: #if a player's offensive spell is detected, add one to spell frame count
 			spell_frame += 1
 
 		if spell_frame <= 10: #if a spell has finished firing, reset spell frame counter and clear all grid flags.
