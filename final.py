@@ -155,7 +155,21 @@ class DesktopModel(object):
 		self.grid9flag = False
 
 	def spell_check(self):
-		if self.grid1flag and self.grid4flag and self.grid7flag and self.grid8flag and self.grid9flag and self.grid6flag and self.grid3flag and (self.grid2flag == False) and (self.grid5flag == False) and (spell_frame <= 10):
+		if (self.grid1flag and self.grid4flag and self.grid7flag) and (self.grid2flag == False and self.grid3flag == False and self.grid5flag == False and self.grid6flag == False and self.grid8flag == False and self.grid9flag == False) and (spell_frame <= 10):
+			if spell_frame == 1:
+				print 'Flipendo!'
+				enemy.DamageTaken(25)
+			enemy.hit = True
+			return
+		
+		elif (self.grid3flag and self.grid6flag and self.grid9flag) and (self.grid1flag == False and self.grid2flag == False and self.grid4flag == False and self.grid5flag == False and self.grid7flag == False and self.grid8flag == False) and (spell_frame <= 10):
+			if spell_frame == 1:
+				print 'Wingardium leviosa!'
+				enemy.DamageTaken(25)
+			enemy.hit = True
+			return
+
+		elif (self.grid1flag and self.grid2flag and self.grid4flag and self.grid5lag) and (self.grid3flag == False and self.grid6flag == False and self.grid7flag == False and self.grid8flag == False and self.grid9flag == False) and (spell_frame <= 10):
 			if spell_frame == 1:
 				print 'Incendio!'
 				enemy.DamageTaken(50)
@@ -163,30 +177,16 @@ class DesktopModel(object):
 			# return True
 			return
 
-		elif self.grid2flag and self.grid5flag and self.grid8flag and self.grid1flag == False and self.grid3flag == False and self.grid4flag == False and self.grid6flag == False and self.grid7flag == False and self.grid9flag == False and (spell_frame <= 10):
+		elif (self.grid2flag and self.grid4flag and self.grid5flag and self.grid6flag and self.grid8flag) and (self.grid1flag == False and self.grid3flag == False and self.grid7flag == False and self.grid9flag == False) and (spell_frame <= 10):
 			if spell_frame == 1:
-				print 'Wingardium leviosa!'
-				enemy.DamageTaken(25)
-			enemy.hit = True
-			return
-
-		elif self.grid1flag and self.grid4flag and self.grid7flag and self.grid2flag == False and self.grid3flag == False and self.grid5flag == False and self.grid6flag == False and self.grid8flag == False and self.grid9flag == False and (spell_frame <= 10):
-			if spell_frame == 1:
-				print 'Flipendo!'
-				enemy.DamageTaken(25)
-			enemy.hit = True
-			return
-
-		elif self.grid2flag and self.grid5flag and self.grid4flag and self.grid8flag and self.grid6flag and self.grid1flag == False and self.grid3flag == False and self.grid7flag == False and self.grid9flag == False and (spell_frame <= 10):
-			if spell_frame == 1:
-				print 'Avada kedavra!'
+				print 'Avada Kedavra!'
 				enemy.DamageTaken(100)
 			enemy.hit = True
 			# Gameover screen
 			# return True
 			return
 
-		elif self.grid1flag and self.grid4flag and self.grid5flag and self.grid6flag and self.grid9flag and self.grid2flag == False and self.grid3flag == False and self.grid7flag == False and self.grid8flag == False and (spell_frame <= 10):
+		elif (self.grid3flag and self.grid4flag and self.grid5flag and self.grid6flag and self.grid7flag) and (self.grid1flag == False and self.grid2flag == False and self.grid8flag == False and self.grid9flag == False) and (spell_frame <= 10):
 			if spell_frame == 1:
 				print 'Stupefy!'
 				enemy.DamageTaken(100)
@@ -195,7 +195,7 @@ class DesktopModel(object):
 			# return True
 			return
 
-		elif self.grid1flag and self.grid4flag and self.grid7flag and self.grid5flag and self.grid3flag and self.grid6flag and self.grid9flag and self.grid2flag == False and self.grid8flag == False and (spell_frame <= 10):
+		elif (self.grid3flag and self.grid5flag and self.grid6flag and self.grid7flag and self.grid8flag) and (self.grid1flag == False and self.grid2flag == False and self.grid4flag == False and self.grid9flag == False) and (spell_frame <= 10):
 			if spell_frame == 1:
 				print 'Expelliarmus!'
 				enemy.DamageTaken(100)
@@ -283,32 +283,32 @@ class Controller(object):
 
 			elif event.type == GRID:
 				if x <= 200 and y <= 150:
-					# print 'Grid 1'
-					model.grid1flag = True
+					# print 'Grid 3'
+					model.grid3flag = True
 				if (x >= 200 and x <= 400) and y <=150:
 					# print 'Grid 2'
 					model.grid2flag = True
 				if x >= 400 and y <= 150:
-					# print 'Grid 3'
-					model.grid3flag = True
+					# print 'Grid 1'
+					model.grid1flag = True
 				if x <= 200 and (y >= 150 and y <=300):
-					# print 'Grid 4'
-					model.grid4flag = True
+					# print 'Grid 6'
+					model.grid6flag = True
 				if (x >= 200 and x <= 400) and (y >= 150 and y <=300):
 					# print 'Grid 5'
 					model.grid5flag = True
 				if x >= 400 and (y >= 150 and y <= 300):
-					# print 'Grid 6'
-					model.grid6flag = True
+					# print 'Grid 4'
+					model.grid4flag = True
 				if x <= 200 and y >= 300:
-					# print 'Grid 7'
-					model.grid7flag = True
+					# print 'Grid 9'
+					model.grid9flag = True
 				if (x >= 200 and x <= 400) and y >= 300:
 					# print 'Grid 8'
 					model.grid8flag = True
 				if x >= 400 and y >= 300:
-					# print 'Grid 9'
-					model.grid9flag = True
+					# print 'Grid 7'
+					model.grid7flag = True
 
 		pygame.event.clear()
 
