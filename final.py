@@ -406,6 +406,7 @@ if __name__ == '__main__':
 			master.process_events()
 
 		# Update the frames of the webcam video
+		webcam.frame = cv2.flip(webcam.frame, 1)
 		cv2.imshow("Frame",webcam.frame)
 		key = cv2.waitKey(1) & 0xFF
 
