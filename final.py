@@ -25,15 +25,14 @@ class WebCam(object):
 		self.ap = argparse.ArgumentParser()
 		self.ap.add_argument("-v","--video",
 			help="path to the(optional) video file")
+
 		self.bufsize = bufsize
 		self.ap.add_argument("-b", "--buffer", type=int, default = 100,
 			help="max buffer size")
 		self.pts = deque(maxlen=bufsize)
+
 		self.rad = []
 		self.counter = counter
-		self.calpts = deque(maxlen=bufsize)
-		self.calrad = []
-		self.calcounter = counter
 
 	def getcenter(self, greenLower, greenUpper):
 		self.args = vars(self.ap.parse_args())
@@ -85,81 +84,6 @@ class WebCam(object):
 		cv2.line(webcam.frame, (0,0), (600,0), redColor, 1)
 		cv2.line(webcam.frame, (0,150), (600,150), redColor, 1)
 		cv2.line(webcam.frame, (0,300), (600,300), redColor, 1)
-
-	def process_pts(self, caldx, caldy):
-		dsX=0
-		dsY=0
-		dX = self.pts[i-buf][0] - webcam.pts[i][0]
-		dY = self.pts[i-buf][1] - webcam.pts[i][1]
-
-class Calibration(object):
-	"""Performs calibration of the 'green thing' and represents the calibrated original "green object" """
-	def __init__(self):
-		self=self
-	def startup(self,greenLower,greenUpper):
-		calibrating = True
-		count = 0
-		calradi = 0
-		caldx = 0
-		caldy = 0
-		calx = 0
-		caly = 0
-		caldXs=[]
-		caldYs=[]
-		calxs=[]
-		calys=[]
-		while calibrating:
-			califind = webcam.getcenter(greenLower, greenUpper)
-			A = "Please hold your object very still"
-			B =	"in the center of the screen."
-			C = "The system is calibrating."
-			D = "This will only take a moment."
-			cv2.putText(webcam.frame,A,(10,30),cv2.FONT_HERSHEY_SIMPLEX,0.9,(0,0,255),3)
-			cv2.putText(webcam.frame,B,(10,100),cv2.FONT_HERSHEY_SIMPLEX,0.9,(0,0,255),3)
-			cv2.putText(webcam.frame,C,(10,170),cv2.FONT_HERSHEY_SIMPLEX,0.9,(0,0,255),3)
-			cv2.putText(webcam.frame,D,(10,240),cv2.FONT_HERSHEY_SIMPLEX,0.9,(0,0,255),3)
-			if califind != None:
-				calicenter = califind[0]
-				caliradius = califind[1]
-
-				if caliradius > 20:
-				#if radius is above a certain size we count it
-					webcam.calpts.append(calicenter)
-					webcam.calrad.append(caliradius)
-					webcam.calcounter = webcam.calcounter + 1
-					calcounter = webcam.calcounter
-
-			buf = 10
-			for i in range (1,len(webcam.calpts)):
-			# ignoring tracked points that are None
-				if webcam.calpts[i-1] is None or webcam.calpts[i] is None:
-					pass
-			#making sure we have enough points
-				if webcam.calcounter >= buf and webcam.calpts[i-buf] is not None:
-					#compute difference between x and y coordinates of the point and the point
-					#minimum buffer length before it
-					count = count + 1
-					calx= webcam.calpts[i][0]
-					caly= webcam.calpts[i][1]
-					caldX = webcam.calpts[i-buf][0] - webcam.calpts[i][0]
-					caldY = webcam.calpts[i-buf][1] - webcam.calpts[i][1]
-					caldXs.append(caldX)
-					caldYs.append(caldY)
-					calxs.append(calx)
-					calys.append(caly)
-			cv2.imshow("Frame",webcam.frame)
-			key = cv2.waitKey(1) & 0xFF
-
-			#Eliminates accidental infinity loops by setting a frame limit on runtime.
-
-			if count > 30:
-				calradi = np.mean(webcam.calrad)
-				caldx = np.mean(caldXs)
-				caldy = np.mean(caldYs)
-				calx = np.mean(calxs)
-				caly = np.mean(calys)
-				return [calradi, (caldx,caldy),(calx,caly)]
-				running = False
 
 
 class Mouse(object):
@@ -398,6 +322,8 @@ if __name__ == '__main__':
 	view = PygameView(model, screen, 'forbiddenforest.jpeg', 'win.png', 'volde.png', 'flame.png')
 	master = Controller(model)
 
+	# cursor = (blueColor,50,50,False)
+
 	"""WEBCAM STUFF"""
 
 	#initialize stuff
@@ -410,21 +336,10 @@ if __name__ == '__main__':
 	greenLower= (29,86,6)
 	greenUpper= (64,255,255)
 
-	calibrate = Calibration()
-	[calradi,(caldx,caldy),(calx,caly)] = calibrate.startup(greenLower,greenUpper)
-
-	cursor = Mouse(blueColor,calx,caly,False)
 	enemy = Enemy(25, 100)
 	# cursor.initialsetup()
 
 	center = 0
-	calcounter = 0
-	(dX,dY) = (0,0)
-	dXs=[]
-	dYs=[]
-	(caldX,caldY)=(0,0)
-	caldXs=[]
-	caldYs=[]
 
 	GRID = pygame.USEREVENT+2
 	grid_event = pygame.event.Event(GRID)
@@ -482,22 +397,12 @@ if __name__ == '__main__':
 				webcam.counter = webcam.counter + 1
 
 				(x,y) = center
-				cursor.set_pos(x,y)
+				# cursor.set_pos(x,y)
 				# print (cursor.x,cursor.y)
 
 				if (x >= 0 and x <= 600) and (y >= 0 and y <= 450):
 					pygame.event.post(grid_event)
 
-		for i in range (1,len(webcam.pts)):
-			# ignoring tracked points that are None
-			if webcam.pts[i-1] is None or webcam.pts[i] is None:
-				pass
-			#making sure we have enough points
-			if webcam.counter >= buf and webcam.pts[i-buf] is not None:
-				#compute difference between x and y coordinates of the point and the point
-				#minimum buffer length before it
-				webcam.process_pts(caldx,caldy)
-			#process the events in the queue
 			master.process_events()
 
 		# Update the frames of the webcam video
