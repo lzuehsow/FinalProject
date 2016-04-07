@@ -74,17 +74,20 @@ class WebCam(object):
 				return [center,radius]
 
 	def update_webcam(self, center):
-		cv2.rectangle(webcam.frame, (490,10), (590,20), greenColor, -2)
-		cv2.circle(webcam.frame, center, 5, redColor, -1)
+		cv2.rectangle(webcam.frame, (490,10), (590,30), greenColor, -1)
+		cv2.rectangle(webcam.frame, (490,10), ((590 - player.hp),30), redColor, -1)
+		
+		# Rect(10,10,(125 - enemy.hp),20)
+		cv2.circle(webcam.frame, center, 5, blueColor, -1)
 
-		cv2.line(webcam.frame, (0,0), (0,450), redColor, 1)
-		cv2.line(webcam.frame, (200,0), (200,450), redColor, 1)
-		cv2.line(webcam.frame, (400,0), (400,450), redColor, 1)
-		cv2.line(webcam.frame, (600,0), (600,450), redColor, 1)
+		cv2.line(webcam.frame, (0,0), (0,450), blueColor, 1)
+		cv2.line(webcam.frame, (200,0), (200,450), blueColor, 1)
+		cv2.line(webcam.frame, (400,0), (400,450), blueColor, 1)
+		cv2.line(webcam.frame, (600,0), (600,450), blueColor, 1)
 
-		cv2.line(webcam.frame, (0,0), (600,0), redColor, 1)
-		cv2.line(webcam.frame, (0,150), (600,150), redColor, 1)
-		cv2.line(webcam.frame, (0,300), (600,300), redColor, 1)
+		cv2.line(webcam.frame, (0,0), (600,0), blueColor, 1)
+		cv2.line(webcam.frame, (0,150), (600,150), blueColor, 1)
+		cv2.line(webcam.frame, (0,300), (600,300), blueColor, 1)
 
 
 class Mouse(object):
@@ -110,6 +113,15 @@ class Mouse(object):
 			self.y = center[1]
 		self.set_pos(self.x, self.y)
 
+
+class Player(object):
+	"""Represents you, the player"""
+	def __init__(self):
+		self.hp = 80
+		self.hit = False
+	def DamageTaken(self,dmg):
+		self.hp = self.hp - dmg
+
 class Enemy(object):
 	"""Represents your opponent"""
 	def __init__(self,x,y):
@@ -122,6 +134,8 @@ class Enemy(object):
 		self.y = newy
 	def DamageTaken(self,dmg):
 		self.hp = self.hp - dmg
+	def DamageDealt(self):
+		self.damage = 10
 
 
 class DesktopModel(object):
@@ -307,9 +321,9 @@ if __name__ == '__main__':
 	pygame.init()
 
 	# Define some colors
-	redColor = pygame.Color(255,0,0)
+	redColor = pygame.Color(0,0,255)
 	greenColor = pygame.Color(0,255,0)
-	blueColor = pygame.Color(0,0,255)
+	blueColor = pygame.Color(255,0,0)
 	whiteColor = pygame.Color(255,255,255)
 
 	# Set pygame fake desktop size
@@ -333,6 +347,7 @@ if __name__ == '__main__':
 	frame = 0
 	eventcount = 0
 	webcam = WebCam()
+	player = Player()
 
 	greenLower= (29,86,6)
 	greenUpper= (64,255,255)
@@ -386,16 +401,18 @@ if __name__ == '__main__':
 		gotcenter = webcam.getcenter(greenLower, greenUpper)
 
 		if gotcenter == None:
-			cv2.rectangle(webcam.frame, (490,10), (590,20), greenColor, -2)
+			cv2.rectangle(webcam.frame, (490,10), (590,30), greenColor, -1)
+			cv2.rectangle(webcam.frame, (490,10), ((590 - player.hp),30), redColor, -1)
 			
-			cv2.line(webcam.frame, (0,0), (0,450), redColor, 1)
-			cv2.line(webcam.frame, (200,0), (200,450), redColor, 1)
-			cv2.line(webcam.frame, (400,0), (400,450), redColor, 1)
-			cv2.line(webcam.frame, (600,0), (600,450), redColor, 1)
+			
+			cv2.line(webcam.frame, (0,0), (0,450), blueColor, 1)
+			cv2.line(webcam.frame, (200,0), (200,450), blueColor, 1)
+			cv2.line(webcam.frame, (400,0), (400,450), blueColor, 1)
+			cv2.line(webcam.frame, (600,0), (600,450), blueColor, 1)
 
-			cv2.line(webcam.frame, (0,0), (600,0), redColor, 1)
-			cv2.line(webcam.frame, (0,150), (600,150), redColor, 1)
-			cv2.line(webcam.frame, (0,300), (600,300), redColor, 1)
+			cv2.line(webcam.frame, (0,0), (600,0), blueColor, 1)
+			cv2.line(webcam.frame, (0,150), (600,150), blueColor, 1)
+			cv2.line(webcam.frame, (0,300), (600,300), blueColor, 1)
 		else:
 			center = gotcenter[0]
 			radius = gotcenter[1]
