@@ -74,7 +74,8 @@ class WebCam(object):
 				return [center,radius]
 
 	def update_webcam(self, center):
-		cv2.circle(webcam.frame,center,5,redColor, -1)
+		cv2.rectangle(webcam.frame, (490,10), (590,20), greenColor, -2)
+		cv2.circle(webcam.frame, center, 5, redColor, -1)
 
 		cv2.line(webcam.frame, (0,0), (0,450), redColor, 1)
 		cv2.line(webcam.frame, (200,0), (200,450), redColor, 1)
@@ -383,8 +384,18 @@ if __name__ == '__main__':
 		#Find the center of any green objects' contours
 
 		gotcenter = webcam.getcenter(greenLower, greenUpper)
+
 		if gotcenter == None:
-			pass
+			cv2.rectangle(webcam.frame, (490,10), (590,20), greenColor, -2)
+			
+			cv2.line(webcam.frame, (0,0), (0,450), redColor, 1)
+			cv2.line(webcam.frame, (200,0), (200,450), redColor, 1)
+			cv2.line(webcam.frame, (400,0), (400,450), redColor, 1)
+			cv2.line(webcam.frame, (600,0), (600,450), redColor, 1)
+
+			cv2.line(webcam.frame, (0,0), (600,0), redColor, 1)
+			cv2.line(webcam.frame, (0,150), (600,150), redColor, 1)
+			cv2.line(webcam.frame, (0,300), (600,300), redColor, 1)
 		else:
 			center = gotcenter[0]
 			radius = gotcenter[1]
