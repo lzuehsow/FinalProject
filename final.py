@@ -310,7 +310,7 @@ class PygameView(object):
 
 	def update(self):
 		"""Draw the game state to the screen"""
-		print enemy.hp
+		# print enemy.hp
 
 		# Enemy spell damage animation
 		if enemy.hit and (spell_frame <= 10):
@@ -319,14 +319,17 @@ class PygameView(object):
 			screen.blit(self.sprite,(enemy.x,enemy.y))
 
 		# Enemy HP bar
-		if enemy.hit and (spell_frame == 1):
+		if enemy.hit and (spell_frame == 1) and enemy.hp > 0:
 			screen.fill((255,0,0),Rect(10,10,(125 - enemy.hp),20))
+		else:
+			pass
 
 		# pygame.draw.circle(screen,cursor.color,(int(cursor.x),int(cursor.y)),20,0)
 		pygame.display.update()
 
 	def wongame(self):
 		screen.blit(self.winscreen,(0,0))
+		pygame.display.update()
 
 
 class Controller(object):
@@ -503,7 +506,10 @@ if __name__ == '__main__':
 
 		frame = frame + 1
 		# Update the fake pygame desktop
-		view.update()
+		if enemy.hp <= 0:
+			pass
+		else:
+			view.update()
 
 
 		time.sleep(.001)
@@ -511,10 +517,10 @@ if __name__ == '__main__':
 			break
 		if key == ord("c"):
 			model.spell_clear()
-		if frame > 500:
-			pygame.quit
-			sys.exit()
-			break
+		# if frame > 500:
+		# 	pygame.quit
+		# 	sys.exit()
+		# 	break
 
 if running == False:
 		#release camera, close open windows
