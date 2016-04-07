@@ -117,7 +117,7 @@ class Mouse(object):
 class Player(object):
 	"""Represents you, the player"""
 	def __init__(self):
-		self.hp = 80
+		self.hp = 100
 		self.hit = False
 	def DamageTaken(self,dmg):
 		self.hp = self.hp - dmg
@@ -169,7 +169,7 @@ class DesktopModel(object):
 			enemy.hit = True
 			return
 
-		elif (self.grid1flag and self.grid2flag and self.grid4flag and self.grid5lag) and (self.grid3flag == False and self.grid6flag == False and self.grid7flag == False and self.grid8flag == False and self.grid9flag == False) and (spell_frame <= 10):
+		elif (self.grid1flag and self.grid2flag and self.grid4flag and self.grid5flag) and (self.grid3flag == False and self.grid6flag == False and self.grid7flag == False and self.grid8flag == False and self.grid9flag == False) and (spell_frame <= 10):
 			if spell_frame == 1:
 				print 'Incendio!'
 				enemy.DamageTaken(50)
@@ -206,6 +206,9 @@ class DesktopModel(object):
 
 		else:
 			enemy.hit = False
+			print "Voldemort takes a stab at you!"
+			player.DamageTaken(1)
+			player.hit = True
 
 	def spell_clear(self):
 		model.grid1flag = False
@@ -382,6 +385,13 @@ if __name__ == '__main__':
 			view.wongame()
 		else:
 			model.spell_check()
+
+		if player.hp <= 0:
+			img = cv2.imread('gameover.jpg')
+			cv2.imshow('Game Over', img)
+			# update_webcam(center)
+		else:
+			pass
 
 		# Check for spells
 		if enemy.hit: #if a player's offensive spell is detected, add one to spell frame count
