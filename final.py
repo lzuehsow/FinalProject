@@ -74,12 +74,6 @@ class WebCam(object):
 				return [center,radius]
 
 	def update_webcam(self, center):
-		cv2.rectangle(webcam.frame, (490,10), (590,30), greenColor, -1)
-		cv2.rectangle(webcam.frame, (490,10), ((590 - player.hp),30), redColor, -1)
-		
-		# Rect(10,10,(125 - enemy.hp),20)
-		cv2.circle(webcam.frame, center, 5, blueColor, -1)
-
 		cv2.line(webcam.frame, (0,0), (0,450), blueColor, 1)
 		cv2.line(webcam.frame, (200,0), (200,450), blueColor, 1)
 		cv2.line(webcam.frame, (400,0), (400,450), blueColor, 1)
@@ -88,6 +82,19 @@ class WebCam(object):
 		cv2.line(webcam.frame, (0,0), (600,0), blueColor, 1)
 		cv2.line(webcam.frame, (0,150), (600,150), blueColor, 1)
 		cv2.line(webcam.frame, (0,300), (600,300), blueColor, 1)
+
+		if center == None:
+			cv2.circle(webcam.frame, (300, 225), 5, blueColor, -1)
+		else:
+			cv2.circle(webcam.frame, center, 5, blueColor, -1)
+
+		if player.hp <= 0:
+			cv2.rectangle(webcam.frame, (0,0), (600,450), (0,0,0), -1)
+			img = cv2.imread('gameover.jpg')
+			cv2.imshow('Game Over', img)
+		else:
+			cv2.rectangle(webcam.frame, (490,10), (590,30), greenColor, -1)
+			cv2.rectangle(webcam.frame, (490,10), ((590 - player.hp),30), redColor, -1)
 
 
 class Mouse(object):
@@ -384,14 +391,8 @@ if __name__ == '__main__':
 			# enemy.hit = False
 			view.wongame()
 		else:
+			view.update()
 			model.spell_check()
-
-		if player.hp <= 0:
-			img = cv2.imread('gameover.jpg')
-			cv2.imshow('Game Over', img)
-			# update_webcam(center)
-		else:
-			pass
 
 		# Check for spells
 		if enemy.hit: #if a player's offensive spell is detected, add one to spell frame count
@@ -411,10 +412,9 @@ if __name__ == '__main__':
 		gotcenter = webcam.getcenter(greenLower, greenUpper)
 
 		if gotcenter == None:
-			cv2.rectangle(webcam.frame, (490,10), (590,30), greenColor, -1)
-			cv2.rectangle(webcam.frame, (490,10), ((590 - player.hp),30), redColor, -1)
 			
-			
+			cv2.circle(webcam.frame, (300, 225), 5, blueColor, -1)
+
 			cv2.line(webcam.frame, (0,0), (0,450), blueColor, 1)
 			cv2.line(webcam.frame, (200,0), (200,450), blueColor, 1)
 			cv2.line(webcam.frame, (400,0), (400,450), blueColor, 1)
@@ -423,6 +423,15 @@ if __name__ == '__main__':
 			cv2.line(webcam.frame, (0,0), (600,0), blueColor, 1)
 			cv2.line(webcam.frame, (0,150), (600,150), blueColor, 1)
 			cv2.line(webcam.frame, (0,300), (600,300), blueColor, 1)
+
+			if player.hp <= 0:
+				cv2.rectangle(webcam.frame, (0,0), (600,450), (0,0,0), -1)
+				img = cv2.imread('gameover.jpg')
+				cv2.imshow('Game Over', img)
+			else:
+				cv2.rectangle(webcam.frame, (490,10), (590,30), greenColor, -1)
+				cv2.rectangle(webcam.frame, (490,10), ((590 - player.hp),30), redColor, -1)
+
 		else:
 			center = gotcenter[0]
 			radius = gotcenter[1]
@@ -450,13 +459,12 @@ if __name__ == '__main__':
 
 		frame = frame + 1
 		# Update the fake pygame desktop
-		if enemy.hp <= 0:
-			pass
-		else:
-			view.update()
+		# if enemy.hp <= 0:
+		# 	pass
+		# else:
+		# 	view.update()
 
-
-		time.sleep(.001)
+		time.sleep(.01)
 		if key == ord("q"):
 			break
 		if key == ord("c"):
