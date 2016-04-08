@@ -302,6 +302,9 @@ class Controller(object):
 
 		pygame.event.clear()
 
+	def close(self):
+		pygame.display.quit()
+		pygame.quit()
 
 if __name__ == '__main__':
 
@@ -409,18 +412,14 @@ if __name__ == '__main__':
 		time.sleep(.001)
 		if key == ord("q"):
 			running = False
-			print "WTF????????????"
-			break
+			if running == False:
+				# Release the camera, close open windows
+				webcam.camera.release()
+				cv2.destroyAllWindows()
+				master.close()
 		if key == ord("c"):
 			model.spell_clear()
-
-# ****************** STOPPING CODE STUFF ****************** #
-print "Game Over"
-if running == False:
-	# Release the camera, close open windows
-	webcam.camera.release()
-	cv2.destroyAllWindows()
-
+			
 # ****************** CODE FOR STUFF WE MIGHT NOT NEED ****************** #
 
 # class Mouse(object):
