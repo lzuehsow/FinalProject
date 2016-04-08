@@ -83,18 +83,15 @@ class WebCam(object):
 		cv2.line(webcam.frame, (0,150), (600,150), blueColor, 1)
 		cv2.line(webcam.frame, (0,300), (600,300), blueColor, 1)
 
-		if center == None:
-			cv2.circle(webcam.frame, (300, 225), 5, blueColor, -1)
-		else:
-			cv2.circle(webcam.frame, center, 5, blueColor, -1)
+		cv2.circle(webcam.frame, center, 5, blueColor, -1)
 
 		if player.hp <= 0:
 			cv2.rectangle(webcam.frame, (0,0), (600,450), (0,0,0), -1)
 			img = cv2.imread('gameover.jpg')
 			cv2.imshow('Game Over', img)
 		else:
-			cv2.rectangle(webcam.frame, (490,10), (590,30), greenColor, -1)
-			cv2.rectangle(webcam.frame, (490,10), ((590 - player.hp),30), redColor, -1)
+			cv2.rectangle(webcam.frame, (50,10), (550,30), greenColor, -1)
+			cv2.rectangle(webcam.frame, (50,10), ((550 - player.hp),30), redColor, -1)
 
 
 class Mouse(object):
@@ -124,10 +121,10 @@ class Mouse(object):
 class Player(object):
 	"""Represents you, the player"""
 	def __init__(self):
-		self.hp = 100
+		self.hp = 500
 		self.hit = False
 	def DamageTaken(self,dmg):
-		self.hp = self.hp - dmg
+		self.hp -= dmg
 
 class Enemy(object):
 	"""Represents your opponent"""
@@ -412,25 +409,7 @@ if __name__ == '__main__':
 		gotcenter = webcam.getcenter(greenLower, greenUpper)
 
 		if gotcenter == None:
-			
-			cv2.circle(webcam.frame, (300, 225), 5, blueColor, -1)
-
-			cv2.line(webcam.frame, (0,0), (0,450), blueColor, 1)
-			cv2.line(webcam.frame, (200,0), (200,450), blueColor, 1)
-			cv2.line(webcam.frame, (400,0), (400,450), blueColor, 1)
-			cv2.line(webcam.frame, (600,0), (600,450), blueColor, 1)
-
-			cv2.line(webcam.frame, (0,0), (600,0), blueColor, 1)
-			cv2.line(webcam.frame, (0,150), (600,150), blueColor, 1)
-			cv2.line(webcam.frame, (0,300), (600,300), blueColor, 1)
-
-			if player.hp <= 0:
-				cv2.rectangle(webcam.frame, (0,0), (600,450), (0,0,0), -1)
-				img = cv2.imread('gameover.jpg')
-				cv2.imshow('Game Over', img)
-			else:
-				cv2.rectangle(webcam.frame, (490,10), (590,30), greenColor, -1)
-				cv2.rectangle(webcam.frame, (490,10), ((590 - player.hp),30), redColor, -1)
+			webcam.update_webcam((300, 225))
 
 		else:
 			center = gotcenter[0]
@@ -464,7 +443,7 @@ if __name__ == '__main__':
 		# else:
 		# 	view.update()
 
-		time.sleep(.01)
+		time.sleep(.001)
 		if key == ord("q"):
 			break
 		if key == ord("c"):
