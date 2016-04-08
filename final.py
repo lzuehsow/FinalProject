@@ -1,9 +1,10 @@
 """Emily Yeh and Lydia Zuehsow"""
 
-"""This program allows a person to wave a flashlight or laser pointer to cast spells, Harry Potter-style!"""
+"""This program allows a person to wave a green "wand" to cast spells, Harry Potter-style!"""
 
 """For future reference, here's a link to our Google doc: https://docs.google.com/document/d/1daGjz8CWycfev0Fs96ru-Na5JNtqs2nVE1fHZ1ydhX0/edit?usp=sharing"""
 
+# ****************** IMPORTED STUFF ****************** #
 
 from collections import deque
 import cv2
@@ -16,57 +17,50 @@ import time
 import numpy as np
 import random
 
+# ****************** CLASSES ****************** #
 
 class WebCam(object):
+	"""Runs the webcam and identifies green objects.
+		return: center coordinates"""
+
 	def __init__(self, bufsize = 100, counter = 0):
-		"""Run webcam, find green, return center coordinates?"""
 		self.camera = cv2.VideoCapture(0)
-		#construct argument parse, parse arguments
 		self.ap = argparse.ArgumentParser()
 		self.ap.add_argument("-v","--video",
 			help="path to the(optional) video file")
-
 		self.bufsize = bufsize
 		self.ap.add_argument("-b", "--buffer", type=int, default = 100,
 			help="max buffer size")
 		self.pts = deque(maxlen=bufsize)
-
 		self.rad = []
 		self.counter = counter
 
 	def getcenter(self, greenLower, greenUpper):
 		self.args = vars(self.ap.parse_args())
-
-		#initialize tracked points, frame counter, coordinate deltas
-
-		#grab current frame
-		(self.grabbed, self.frame) = self.camera.read()
+		(self.grabbed, self.frame) = self.camera.read() # Grabs the current frame
 		
-		#resize frame, blur frame, conert to HSV color space
+		# Resizes the frame, blurs the frame, converts to HSV color space
 		self.frame = imutils.resize(self.frame, width=600)
 		blurred = cv2.GaussianBlur(self.frame,(11,11),0)
 		hsv = cv2.cvtColor(self.frame,cv2.COLOR_BGR2HSV)
 
-		#construct mask for "green", perform dilations and erosions
-		#to remove erroneous parts of mask
+		# Constructs a mask for "green" objects, performs dilations and erosions to remove erroneous parts of the mask
 		mask = cv2.inRange(hsv, greenLower, greenUpper)
 		mask = cv2.erode(mask,None,iterations=1)
 		mask = cv2.dilate(mask,None,iterations=1)
 
-		#find contours in the mask, initialize current (x,y) center
+		# Finds contours in the mask, initializes the current (x,y) center
 		self.cnts = cv2.findContours(mask.copy(),cv2.RETR_EXTERNAL,
 			cv2.CHAIN_APPROX_SIMPLE)[-2]
 
-		#only continue if at least one contour is found
+		# Only continue if at least one contour is found
 		if len(self.cnts) > 0:
-
-			#find largest contour in mask, use it to compute 
-			#minimum enclosing circle and centroid for that contour
-
+			# Find the largest contour in the mask, use it to compute the minimum enclosing circle and centroid for that contour
 			c = max(self.cnts,key=cv2.contourArea)
 			M = cv2.moments(c)
 			(center,radius) = cv2.minEnclosingCircle(c)
 			Mlist= [M["m10"], M["m00"],M["m01"],M["m00"]]
+
 			if any(Mlist) == 0:
 				return None
 			else:
@@ -74,17 +68,19 @@ class WebCam(object):
 				return [center,radius]
 
 	def update_webcam(self, center):
+		# Draw a grid on the webcam stream for spell-casting
 		cv2.line(webcam.frame, (0,0), (0,450), blueColor, 1)
 		cv2.line(webcam.frame, (200,0), (200,450), blueColor, 1)
 		cv2.line(webcam.frame, (400,0), (400,450), blueColor, 1)
 		cv2.line(webcam.frame, (600,0), (600,450), blueColor, 1)
-
 		cv2.line(webcam.frame, (0,0), (600,0), blueColor, 1)
 		cv2.line(webcam.frame, (0,150), (600,150), blueColor, 1)
 		cv2.line(webcam.frame, (0,300), (600,300), blueColor, 1)
 
+		# Draw a dot to represent the wand's coordinates
 		cv2.circle(webcam.frame, center, 5, blueColor, -1)
 
+		# What happens next depends on whether the player is still alive or not
 		if player.hp <= 0:
 			cv2.rectangle(webcam.frame, (0,0), (600,450), (0,0,0), -1)
 			img = cv2.imread('gameover.jpg')
@@ -94,60 +90,41 @@ class WebCam(object):
 			cv2.rectangle(webcam.frame, (50,10), ((550 - player.hp),30), redColor, -1)
 
 
-class Mouse(object):
-	"""Represents your spell trail"""
-	def __init__(self,color,x=50,y=50,selected=False):
-		self.x = x
-		self.y = y
-		self.color = color
-		self.selected = selected
-
-	def set_pos(self, x, y):
-		self.x = x
-		self.y = y
-		# self.color = redColor
-
-	def Move(self):
-		gotcenter = webcam.getcenter(greenLower, greenUpper)
-		if gotcenter == None:
-			pass
-		else:
-			center = gotcenter[0]
-			self.x = center[0]
-			self.y = center[1]
-		self.set_pos(self.x, self.y)
-
-
 class Player(object):
-	"""Represents you, the player"""
+	"""Represents you, the player!"""
+
 	def __init__(self):
 		self.hp = 500
 		self.hit = False
+
 	def DamageTaken(self,dmg):
 		self.hp -= dmg
 
+
 class Enemy(object):
-	"""Represents your opponent"""
+	"""Represents your opponent."""
+
 	def __init__(self,x,y):
 		self.x = x
 		self.y = y
 		self.hp = 100
 		self.hit = False
+
 	def Move(self, newx, newy):
 		self.x = newx
 		self.y = newy
+
 	def DamageTaken(self,dmg):
 		self.hp = self.hp - dmg
+
 	def DamageDealt(self):
 		self.damage = 10
 
 
 class DesktopModel(object):
-	"""Stores the fake desktop state"""
-	def __init__(self):
-		# self.desktop = screen.fill(whiteColor)
-		# pygame.display.update()
+	"""Stores the fake desktop state."""
 
+	def __init__(self):
 		self.grid1flag = False
 		self.grid2flag = False
 		self.grid3flag = False
@@ -161,21 +138,21 @@ class DesktopModel(object):
 	def spell_check(self):
 		if (self.grid1flag and self.grid4flag and self.grid7flag) and (self.grid2flag == False and self.grid3flag == False and self.grid5flag == False and self.grid6flag == False and self.grid8flag == False and self.grid9flag == False) and (spell_frame <= 10):
 			if spell_frame == 1:
-				print 'Flipendo!'
+				print 'You cast Flipendo!'
 				enemy.DamageTaken(25)
 			enemy.hit = True
 			return
 		
 		elif (self.grid3flag and self.grid6flag and self.grid9flag) and (self.grid1flag == False and self.grid2flag == False and self.grid4flag == False and self.grid5flag == False and self.grid7flag == False and self.grid8flag == False) and (spell_frame <= 10):
 			if spell_frame == 1:
-				print 'Wingardium leviosa!'
+				print 'You cast Wingardium leviosa!'
 				enemy.DamageTaken(25)
 			enemy.hit = True
 			return
 
 		elif (self.grid1flag and self.grid2flag and self.grid4flag and self.grid5flag) and (self.grid3flag == False and self.grid6flag == False and self.grid7flag == False and self.grid8flag == False and self.grid9flag == False) and (spell_frame <= 10):
 			if spell_frame == 1:
-				print 'Incendio!'
+				print 'You cast Incendio!'
 				enemy.DamageTaken(50)
 			enemy.hit = True
 			# return True
@@ -183,7 +160,7 @@ class DesktopModel(object):
 
 		elif (self.grid2flag and self.grid4flag and self.grid5flag and self.grid6flag and self.grid8flag) and (self.grid1flag == False and self.grid3flag == False and self.grid7flag == False and self.grid9flag == False) and (spell_frame <= 10):
 			if spell_frame == 1:
-				print 'Avada Kedavra!'
+				print 'You cast Avada kedavra!'
 				enemy.DamageTaken(100)
 			enemy.hit = True
 			# Gameover screen
@@ -192,7 +169,7 @@ class DesktopModel(object):
 
 		elif (self.grid3flag and self.grid4flag and self.grid5flag and self.grid6flag and self.grid7flag) and (self.grid1flag == False and self.grid2flag == False and self.grid8flag == False and self.grid9flag == False) and (spell_frame <= 10):
 			if spell_frame == 1:
-				print 'Stupefy!'
+				print 'You cast Stupefy!'
 				enemy.DamageTaken(100)
 			enemy.hit = True
 			# Gameover screen
@@ -201,7 +178,7 @@ class DesktopModel(object):
 
 		elif (self.grid3flag and self.grid5flag and self.grid6flag and self.grid7flag and self.grid8flag) and (self.grid1flag == False and self.grid2flag == False and self.grid4flag == False and self.grid9flag == False) and (spell_frame <= 10):
 			if spell_frame == 1:
-				print 'Expelliarmus!'
+				print 'You cast Expelliarmus!'
 				enemy.DamageTaken(100)
 			enemy.hit = True
 			# Gameover screen
@@ -210,9 +187,14 @@ class DesktopModel(object):
 
 		else:
 			enemy.hit = False
-			print "Voldemort takes a stab at you!"
-			player.DamageTaken(1)
-			player.hit = True
+			if player.hp > 0:
+				dialogue = ["Voldemort takes a stab at you!", "Voldemort casts a spell-- it narrowly misses you!", "Voldemort realizes he doesn't have a nose and waves his wand in frustration!", "Voldemort screams something unintelligible and hits you with a weak spell!", "Voldemort unleashes a stream of curses! They're not very effective.", "Voldemort pauses for a moment to pick his nose, only to realize he doesn't have one.", "Voldemort calls forth an army of dementors, but they swarm around him excitedly like a bunch of puppies.", "Voldemort yells a hurtful insult at you!", "Voldemort bends down to pick up a tiny pebble and flings it at you! It hits you squarely in the stomach.", "Voldemort throws Nagini at you! Nagini is displeased.", "You tell Voldemort you just want to be friends. He gives you a scalding glare."]
+			
+				if random.randint(0,10) == 5:
+					player.hit = True
+					player.DamageTaken(10)
+					dialogue_choose = dialogue[random.randint(0,9)]
+					print dialogue_choose
 
 	def spell_clear(self):
 		model.grid1flag = False
@@ -225,10 +207,12 @@ class DesktopModel(object):
 		model.grid8flag = False
 		model.grid9flag = False
 
+
 class PygameView(object):
-	"""Visualizes a fake desktop in a pygame window"""
+	"""Visualizes a fake desktop in a pygame window."""
+
 	def __init__(self,model,screen,background, winscreen, sprite, explosion):
-		"""Initialise the view with a specific model"""
+		"""Initialise the view with a specific model."""
 		self.model = model
 		self.screen = screen.fill(whiteColor)
 
@@ -237,7 +221,7 @@ class PygameView(object):
 		background = pygame.transform.scale(background, (screenwidth,screenheight))
 		screen.blit(background,(0,0))
 
-		# Lead Gamewin png
+		# Lead the win screen
 		self.winscreen = pygame.image.load(winscreen).convert()
 		self.winscreen = pygame.transform.scale(self.winscreen, (screenwidth,screenheight))
 
@@ -248,7 +232,7 @@ class PygameView(object):
 		self.explosion = pygame.image.load(explosion).convert_alpha()
 		self.explosion = pygame.transform.scale(self.explosion, (250,250))
 
-		# Enemy HP bar
+		# Draw the enemy's HP bar
 		screen.fill((0,255,0),Rect(10,10,100,20))
 
 		# Update game display
@@ -256,21 +240,18 @@ class PygameView(object):
 
 	def update(self):
 		"""Draw the game state to the screen"""
-		# print enemy.hp
-
 		# Enemy spell damage animation
 		if enemy.hit and (spell_frame <= 10):
 			screen.blit(self.explosion,(enemy.x + 200,enemy.y + 150))
 		else:
 			screen.blit(self.sprite,(enemy.x,enemy.y))
 
-		# Enemy HP bar
+		# Update the enemy's HP bar
 		if enemy.hit and (spell_frame == 1) and enemy.hp > 0:
 			screen.fill((255,0,0),Rect(10,10,(125 - enemy.hp),20))
 		else:
 			pass
 
-		# pygame.draw.circle(screen,cursor.color,(int(cursor.x),int(cursor.y)),20,0)
 		pygame.display.update()
 
 	def wongame(self):
@@ -279,8 +260,10 @@ class PygameView(object):
 
 
 class Controller(object):
+	"""Your controller is your green wand. Its position determines if you cast a spell or what spell you cast."""
 	def __init__(self,model):
 		self.model = model
+
 	def process_events(self):
  		"""Process all of the events in the queue"""
  		for event in pygame.event.get():
@@ -322,7 +305,7 @@ class Controller(object):
 
 if __name__ == '__main__':
 
-	"""Initializing"""
+# ****************** INITIALIZING STUFF ****************** #
 
 	# Initialize pygame
 	pygame.init()
@@ -334,8 +317,8 @@ if __name__ == '__main__':
 	whiteColor = pygame.Color(255,255,255)
 
 	# Set pygame fake desktop size
-	screenwidth= 600
-	screenheight= 450
+	screenwidth = 600
+	screenheight = 450
 
 	size = (screenwidth, screenheight)
 	screen = pygame.display.set_mode(size)
@@ -346,7 +329,7 @@ if __name__ == '__main__':
 
 	# cursor = (blueColor,50,50,False)
 
-	"""WEBCAM STUFF"""
+# ****************** WEBCAM STUFF ****************** #
 
 	#initialize stuff
 
@@ -356,18 +339,17 @@ if __name__ == '__main__':
 	webcam = WebCam()
 	player = Player()
 
-	greenLower= (29,86,6)
-	greenUpper= (64,255,255)
+	greenLower = (29,86,6)
+	greenUpper = (64,255,255)
 
 	enemy = Enemy(25, 100)
-	# cursor.initialsetup()
 
 	center = 0
 
 	GRID = pygame.USEREVENT+2
 	grid_event = pygame.event.Event(GRID)
 
-	# makes sure only the events we want are on the event queue
+	# Makes sure only the events we want are on the event queue
 	allowed_events = [QUIT,GRID]
 	pygame.event.set_allowed(allowed_events)
 
@@ -378,54 +360,42 @@ if __name__ == '__main__':
 	# to its location 10 frames earlier. 
 	
 
-	"""RUNTIME LOOP"""
-
+# ****************** RUNTIME LOOP ****************** #
 	# This is the main loop of the program. 
 	spell_frame = 0
 
 	while running:
 		if enemy.hp <= 0:
-			# enemy.hit = False
 			view.wongame()
 		else:
 			view.update()
 			model.spell_check()
 
 		# Check for spells
-		if enemy.hit: #if a player's offensive spell is detected, add one to spell frame count
-			spell_frame += 1
+			if enemy.hit: #if a player's offensive spell is detected, add one to spell frame count
+				spell_frame += 1
+				if spell_frame > 3: #if a spell has finished firing, reset spell frame counter and clear all grid flags.
+					model.spell_clear()
+					spell_frame = 0
+				else:
+					pass
+			else:
+				pass
 
-		if spell_frame <= 10: #if a spell has finished firing, reset spell frame counter and clear all grid flags.
-			pass
-		else:
-			model.spell_clear()
-			spell_frame = 0
-
-		# print model.store_flags
-
-		# pygame.draw.circle(screen,ballcolor,(int(cursor.x),int(cursor.y)),20,0)
-		#Find the center of any green objects' contours
-
+		# Find the center of any green objects' contours
 		gotcenter = webcam.getcenter(greenLower, greenUpper)
-
 		if gotcenter == None:
 			webcam.update_webcam((300, 225))
-
 		else:
 			center = gotcenter[0]
 			radius = gotcenter[1]
 			webcam.update_webcam(center)
-
 			if radius > 20:
-				#if radius is above a certain size we count it
+				# If the radius is above a certain size we count it
 				webcam.pts.append(center)
 				webcam.rad.append(radius)
 				webcam.counter = webcam.counter + 1
-
 				(x,y) = center
-				# cursor.set_pos(x,y)
-				# print (cursor.x,cursor.y)
-
 				if (x >= 0 and x <= 600) and (y >= 0 and y <= 450):
 					pygame.event.post(grid_event)
 
@@ -435,28 +405,47 @@ if __name__ == '__main__':
 		webcam.frame = cv2.flip(webcam.frame, 1)
 		cv2.imshow("Frame",webcam.frame)
 		key = cv2.waitKey(1) & 0xFF
-
 		frame = frame + 1
-		# Update the fake pygame desktop
-		# if enemy.hp <= 0:
-		# 	pass
-		# else:
-		# 	view.update()
-
 		time.sleep(.001)
 		if key == ord("q"):
+			running = False
+			print "WTF????????????"
 			break
 		if key == ord("c"):
 			model.spell_clear()
-		# if frame > 500:
-		# 	pygame.quit
-		# 	sys.exit()
-		# 	break
 
+# ****************** STOPPING CODE STUFF ****************** #
+print "Game Over"
 if running == False:
-		#release camera, close open windows
-		webcam.camera.release()
-		cv2.destroyAllWindows()
+	# Release the camera, close open windows
+	webcam.camera.release()
+	cv2.destroyAllWindows()
+
+# ****************** CODE FOR STUFF WE MIGHT NOT NEED ****************** #
+
+# class Mouse(object):
+# 	"""Represents your spell trail"""
+# 	def __init__(self,color,x=50,y=50,selected=False):
+# 		self.x = x
+# 		self.y = y
+# 		self.color = color
+# 		self.selected = selected
+
+# 	def set_pos(self, x, y):
+# 		self.x = x
+# 		self.y = y
+# 		# self.color = redColor
+
+# 	def Move(self):
+# 		gotcenter = webcam.getcenter(greenLower, greenUpper)
+# 		if gotcenter == None:
+# 			pass
+# 		else:
+# 			center = gotcenter[0]
+# 			self.x = center[0]
+# 			self.y = center[1]
+# 		self.set_pos(self.x, self.y)
+
 
 
 # print model.store_flags
