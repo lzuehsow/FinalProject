@@ -2,9 +2,7 @@
 ---
 
 # The Dueling Association
-Get your wands ready.
-
-## A Software Design final project brought to you by Lydia Zuehsow (@Oktober13) and Emily Yeh (@YehEmily)
+Get your wands ready! This is a Software Design final project brought to you by Lydia Zuehsow (@Oktober13) and Emily Yeh (@YehEmily).
 
 ## What is this?
 This project is a fanmade Harry Potter dueling game. In this game, the player battles against Voldemort. Voldemort casts a number of spells, which inflict damage on the player. The player can return fire by waving their own wand in certain patterns, thereby casting spells.
