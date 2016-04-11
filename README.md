@@ -4,11 +4,15 @@
 # The Dueling Association
 Get your wands ready.
 
-## What is this?
-In this project, we created a Harry Potter dueling game. When a player waves a wand in a certain pattern, they cast a spell and inflict damage upon Voldemort. In the meantime, Voldemort inflicts a randomly generated amount of damage upon the player.
+## A Software Design final project brought to you by Lydia Zuehsow (@Oktober13) and Emily Yeh (@YehEmily)
 
-### Installation
-There are a few packages you will need to install in order to play. 
+## What is this?
+This project is a fanmade Harry Potter dueling game. In this game, the player battles against Voldemort. Voldemort casts a number of spells, which inflict damage on the player. The player can return fire by waving their own wand in certain patterns, thereby casting spells.
+
+This is our final project for our Spring 2016 Software Design class at the Olin College of Engineering. We are both huge nerds when it comes to Harry Potter, so we thought it would be pretty rad to create a physical magic dueling game.
+
+## Installation
+There are a few packages you may need to install in order to play. 
 
 #### Installing OpenCV
 ``` python
@@ -32,8 +36,5 @@ pip install imutils
 pip install argparse
 ```
 
-## Our Team
-Lydia Zuehsow (@Oktober13): A true Slytherin from the streets of Chicago!
-Emily Yeh (@YehEmily): A proud Hufflepuff from the city of Seattle!
-
-Together... we are... the Dueling Association!
+## How to Play
+Simply grab a green object, which will act as your wand. If you run our code, you will be faced with Voldemort and an instant volley of attacks! You must wave your wand in a recognizeable pattern to cast spells that can hurt Voldemort back.
