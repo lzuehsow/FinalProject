@@ -155,7 +155,6 @@ class DesktopModel(object):
 				print 'You cast Incendio!'
 				enemy.DamageTaken(50)
 			enemy.hit = True
-			# return True
 			return
 
 		elif (self.grid2flag and self.grid4flag and self.grid5flag and self.grid6flag and self.grid8flag) and (self.grid1flag == False and self.grid3flag == False and self.grid7flag == False and self.grid9flag == False) and (spell_frame <= 10):
@@ -163,8 +162,6 @@ class DesktopModel(object):
 				print 'You cast Avada kedavra!'
 				enemy.DamageTaken(100)
 			enemy.hit = True
-			# Gameover screen
-			# return True
 			return
 
 		elif (self.grid3flag and self.grid4flag and self.grid5flag and self.grid6flag and self.grid7flag) and (self.grid1flag == False and self.grid2flag == False and self.grid8flag == False and self.grid9flag == False) and (spell_frame <= 10):
@@ -172,8 +169,6 @@ class DesktopModel(object):
 				print 'You cast Stupefy!'
 				enemy.DamageTaken(100)
 			enemy.hit = True
-			# Gameover screen
-			# return True
 			return
 
 		elif (self.grid3flag and self.grid5flag and self.grid6flag and self.grid7flag and self.grid8flag) and (self.grid1flag == False and self.grid2flag == False and self.grid4flag == False and self.grid9flag == False) and (spell_frame <= 10):
@@ -181,8 +176,6 @@ class DesktopModel(object):
 				print 'You cast Expelliarmus!'
 				enemy.DamageTaken(100)
 			enemy.hit = True
-			# Gameover screen
-			# return True
 			return
 
 		else:
