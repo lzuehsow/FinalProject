@@ -77,6 +77,25 @@ class WebCam(object):
 		cv2.line(webcam.frame, (0,150), (600,150), blueColor, 1)
 		cv2.line(webcam.frame, (0,300), (600,300), blueColor, 1)
 
+		if model.grid1flag == True:
+			cv2.rectangle(webcam.frame,(400,0),(600,150),greenColor,5)
+		if model.grid2flag == True:
+			cv2.rectangle(webcam.frame,(200,0),(400,150),greenColor,5)
+		if model.grid3flag == True:
+			cv2.rectangle(webcam.frame,(0,0),(200,150),greenColor,5)
+		if model.grid4flag == True:
+			cv2.rectangle(webcam.frame,(400,150),(600,300),greenColor,5)
+		if model.grid5flag == True:
+			cv2.rectangle(webcam.frame,(200,150),(400,300),greenColor,5)
+		if model.grid6flag == True:
+			cv2.rectangle(webcam.frame,(0,150),(200,300),greenColor,5)
+		if model.grid7flag == True:
+			cv2.rectangle(webcam.frame,(400,300),(600,450),greenColor,5)
+		if model.grid8flag == True:
+			cv2.rectangle(webcam.frame,(200,300),(400,450),greenColor,5)
+		if model.grid9flag == True:
+			cv2.rectangle(webcam.frame,(0,300),(200,450),greenColor,5)
+
 		# Draw a dot to represent the wand's coordinates
 		cv2.circle(webcam.frame, center, 5, blueColor, -1)
 
