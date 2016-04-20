@@ -1,0 +1,36 @@
+Emily Yeh & Lydia Zuehsow
+
+***************************************************************
+
+Background & Context:
+In this project, we would like to create a Harry Potter duel game using OpenCV and pygame. In this game, a player will wave a wand in a certain pattern to cast a spell. The pattern that the wand traces will be tracked using OpenCV, triggering an action scene in pygame. We have two ideas for stretch goals in this project-- first, being able to play with friends across a network, and second, being able to implement special effects, like paralysis, freezing, blinding, and cooldown times.
+
+Here’s a list of approximately all the things we’ll need to accomplish:
+Get the wand working efficiently, both physically and virtually (laser pointer version, not color version)
+Program spells (using a grid system)
+Program the actual action scenes, with pretty graphics
+Point systems for multiplayer gameplay and spell tiers
+Icing on the cake-- special effects! Paralysis, freezing, blinding, cooldown times
+Streeeeeeetch goal-- Networked games, playing with friends using wifi
+
+Libraries used: OpenCV and probably pygame
+Our project will be much like the mini-game interactive programming project, except now it’s a big game project! It’s a Model-View-Controller on a massive scale.
+OpenCV detects your wand movements, our program interprets them, and pygame displays you kicking some wizardly butt.
+Our program will split up the OpenCV screen into a series of gridded quadrants. When you move your wand through the quadrants in a certain order that corresponds to a spell, the computer detects that you cast something and visualizes the appropriate effect. Spells will have a casting cooldown time that we will determine based on how powerful/long-lasting it is. 
+
+In a real Harry Potter duel, duelists wave their wands and say the name of the spell they want to use in order to cast it. In our version, we will just take the wand-waving patterns as input and use that to "cast" spells.
+
+***************************************************************
+
+Key Questions:
+1. Tutorials: what would you want to see in a tutorial for this game? Should we light up the grid squares that the player needs to touch in order to cast certain spells? In what style?
+2. Cooldown periods: how should we implement these?
+3. General efficiency - give us tips to make our code more efficient?
+
+***************************************************************
+
+Agenda:
+1. Quick recap of our project
+2. Demonstration and discussion of what is new
+3. Split code review
+4. Closing notes and thanking the audience!
