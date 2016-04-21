@@ -360,6 +360,7 @@ class Controller(object):
 				sys.exit()
 
 			elif event.type == GRID:
+				(x,y) = center
 				if x <= 200 and y <= 150:
 					# print 'Grid 3'
 					model.grid3flag = True
