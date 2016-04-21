@@ -35,6 +35,10 @@ class WebCam(object):
 		self.rad = []
 		self.counter = counter
 
+		self.calpts = deque(maxlen=bufsize)
+		self.calrad = []
+		self.calcounter = counter
+
 	def getcenter(self, greenLower, greenUpper):
 		self.args = vars(self.ap.parse_args())
 		(self.grabbed, self.frame) = self.camera.read() # Grabs the current frame
@@ -108,6 +112,64 @@ class WebCam(object):
 			cv2.rectangle(webcam.frame, (50,10), (550,30), greenColor, -1)
 			cv2.rectangle(webcam.frame, (50,10), ((550 - player.hp),30), redColor, -1)
 
+class Calibration(object):
+	"""Performs calibration of the 'green thing' and represents the calibrated original "green object" """
+	def __init__(self):
+		self.loading = pygame.image.load('loadingscreen.gif').convert()
+		self.loading = pygame.transform.scale(self.loading, (screenwidth,screenheight))
+
+	def startup(self,greenLower,greenUpper):
+
+		calibrating = True
+		count = 0
+		calradi = 0
+		calx = 0
+		caly = 0
+		calxs=[]
+		calys=[]
+
+		while calibrating:
+			screen.blit(self.loading,(0,0))
+			pygame.display.update()
+
+			califind = webcam.getcenter(greenLower, greenUpper)
+			cv2.rectangle(webcam.frame, (0,0), (600,450), (0,0,0), -1)
+
+			A = "Please hold your wand very still!"
+			B =	"The Dueling Association is assembling."
+
+			cv2.putText(webcam.frame,A,(10,30),cv2.FONT_HERSHEY_SIMPLEX,0.9,(255,255,255),3)
+			cv2.putText(webcam.frame,B,(10,100),cv2.FONT_HERSHEY_SIMPLEX,0.9,(255,255,255),3)
+
+			if califind == None:
+				pass
+			else:
+				calicenter = califind[0]
+				caliradius = califind[1]
+
+				if caliradius > 20:
+				#if radius is above a certain size we count it
+					webcam.calpts.append(calicenter)
+					webcam.calrad.append(caliradius)
+					count = count + 1
+					calcounter = webcam.calcounter
+			buf = 10
+
+			cv2.imshow("Frame",webcam.frame)
+			key = cv2.waitKey(1) & 0xFF
+
+			#Eliminates accidental infinity loops by setting a frame limit on runtime.
+
+			if count > 50:
+				calradi = np.mean(webcam.calrad)
+				calibrating = False
+				return calradi
+
+# class Tutoriel(object):
+# 	def __init__(self):
+# 		self = self
+# ffff
+
 
 class Player(object):
 	"""Represents you, the player!"""
@@ -118,7 +180,6 @@ class Player(object):
 
 	def DamageTaken(self,dmg):
 		self.hp -= dmg
-
 
 class Enemy(object):
 	"""Represents your opponent."""
@@ -220,6 +281,20 @@ class DesktopModel(object):
 		model.grid9flag = False
 
 
+class Menu(object):
+	def __init__(self):
+		self.screen = screen.fill(whiteColor)
+	def Button(self, x, y, color):
+		self.x = x
+		self.y = y
+		self.width = 200
+		self.height = 50
+		screen.fill(color,Rect(self.x,self.y,self.width,self.height))
+	def update(self):
+		tutorielbutton = menu.Button(25,25,blueColor)
+		pygame.display.update()
+
+
 class PygameView(object):
 	"""Visualizes a fake desktop in a pygame window."""
 
@@ -275,6 +350,7 @@ class Controller(object):
 	"""Your controller is your green wand. Its position determines if you cast a spell or what spell you cast."""
 	def __init__(self,model):
 		self.model = model
+		self.selected = False
 
 	def process_events(self):
  		"""Process all of the events in the queue"""
@@ -312,6 +388,11 @@ class Controller(object):
 					# print 'Grid 7'
 					model.grid7flag = True
 
+			elif event.type == BUTTON:
+				(x,y) = center
+				if x > 25 and x < 225 and y > 25 and y < 75:
+					running = True
+
 		pygame.event.clear()
 
 	def close(self):
@@ -338,46 +419,66 @@ if __name__ == '__main__':
 	size = (screenwidth, screenheight)
 	screen = pygame.display.set_mode(size)
 
-	model = DesktopModel()
-	view = PygameView(model, screen, 'forbiddenforest.jpeg', 'win.png', 'volde.png', 'flame.png')
-	master = Controller(model)
-
-	# cursor = (blueColor,50,50,False)
-
-# ****************** WEBCAM STUFF ****************** #
-
-	#initialize stuff
-
-	running = True
-	frame = 0
-	eventcount = 0
-	webcam = WebCam()
-	player = Player()
-
 	greenLower = (29,86,6)
 	greenUpper = (64,255,255)
 
-	enemy = Enemy(25, 100)
-
+	frame = 0
+	spell_frame = 0
+	eventcount = 0
 	center = 0
+
+	webcam = WebCam()
+	calibrate = Calibration()
+	calradi = calibrate.startup(greenLower,greenUpper)
+
+	menu = Menu()
+	model = DesktopModel()
+	master = Controller(model)
+
+	# running = False
+	running = True
 
 	GRID = pygame.USEREVENT+2
 	grid_event = pygame.event.Event(GRID)
 
+	BUTTON = pygame.USEREVENT+3
+	button_event = pygame.event.Event(BUTTON)
+
 	# Makes sure only the events we want are on the event queue
-	allowed_events = [QUIT,GRID]
+	allowed_events = [QUIT,GRID,BUTTON]
 	pygame.event.set_allowed(allowed_events)
 
-	buf = 10
-	# "buf" is the buffer- the number of frames we go backwards 
-	# to compare for movement- so if buf is 10, we compare 
-	# the location of the "green" in the current frame 
-	# to its location 10 frames earlier. 
 	
-
 # ****************** RUNTIME LOOP ****************** #
 	# This is the main loop of the program. 
-	spell_frame = 0
+
+	while running == False and frame <= 100:
+
+		gotcenter = webcam.getcenter(greenLower, greenUpper)
+		if gotcenter == None:
+			master.selected = False
+		else:
+			center = gotcenter[0]
+			radius = gotcenter[1]
+			print radius
+			print calradi
+			if radius >= calradi + 15:
+				pygame.event.post(button_event)
+			
+		menu.update()
+		# webcam.frame = cv2.flip(webcam.frame, 1)
+		cv2.circle(webcam.frame, center, 5, blueColor, -1)
+		cv2.imshow("Frame",webcam.frame)
+		key = cv2.waitKey(1) & 0xFF
+
+		master.process_events()
+		frame += 1
+		time.sleep(.001)
+
+	if running == True:
+		view = PygameView(model, screen, 'forbiddenforest.jpeg', 'win.png', 'volde.png', 'flame.png')
+		player = Player()
+		enemy = Enemy(25, 100)
 
 	while running:
 		if enemy.hp <= 0:
