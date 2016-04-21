@@ -51,7 +51,6 @@ class WebCam(object):
 		# Constructs a mask for "green" objects, performs dilations and erosions to remove erroneous parts of the mask
 		mask = cv2.inRange(hsv, greenLower, greenUpper)
 		mask = cv2.erode(mask,None,iterations=1)
-		mask = cv2.dilate(mask,None,iterations=1)
 
 		# Finds contours in the mask, initializes the current (x,y) center
 		self.cnts = cv2.findContours(mask.copy(),cv2.RETR_EXTERNAL,
@@ -284,6 +283,8 @@ class DesktopModel(object):
 class Menu(object):
 	def __init__(self):
 		self.screen = screen.fill(whiteColor)
+		self.font = pygame.font.SysFont("monospace", 15)
+		self.text = self.font.render("Play", 5, (0,0,0))
 	def Button(self, x, y, color):
 		self.x = x
 		self.y = y
@@ -292,6 +293,7 @@ class Menu(object):
 		screen.fill(color,Rect(self.x,self.y,self.width,self.height))
 	def update(self):
 		tutorielbutton = menu.Button(25,25,blueColor)
+		screen.blit(self.text, (35, 35))
 		pygame.display.update()
 
 
@@ -436,8 +438,8 @@ if __name__ == '__main__':
 	model = DesktopModel()
 	master = Controller(model)
 
-	# running = False
-	running = True
+	running = False
+	# running = True
 
 	GRID = pygame.USEREVENT+2
 	grid_event = pygame.event.Event(GRID)
