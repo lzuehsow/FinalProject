@@ -1,0 +1,24 @@
+************************************FEEDBACK************************************
+
+From the technical review, we received a lot of really good feedback and tips for additional features! Here is a summarized list of what we learned:
+
+1. Concerning a tutorial:
+	a. Have an outline of a basic spell flash across the screen
+	b. Be able to play with spells for practice
+	c. Use a dot as a guide or display an arrow to show where to move your wand
+	d. Number the grids and give the player the order in which the grids should be triggered
+2. Concerning cooldown periods:
+	a. Try making the game turn-based?
+	b. Give the opponent a pre-spell trail to show how to counteract his upcoming spell
+3. Concerning gameplay:
+	a. Sound effects would be great!
+	b. Press a key to start casting spells so that you don't have to worry about what grid your wand is hovering over
+	c. More special effects (especially when the opponent starts casting)
+
+************************************DECISIONS************************************
+
+We plan to incorporate most of this feedback in future iterations of our project. We definitely want to implement a tutorial and cooldown periods before we turn in this project, and we would also like to add sound effects and visual effects. We have yet to work on implementing these things, though, so while we are sure we will have more questions in the future, we do not have any at the moment.
+
+************************************REVIEW PROCESS REFLECTION************************************
+
+This time, we were much better prepared for the technical review! We split our peers into two groups to do a code review-esque type of exercise. We provided less context for our audience, since we assumed they would remember what our project was about from the last technical review,  but we managed to get very good feedback on everything that we had hoped to get feedback on, and suggestions for more features that we had never thought of, but are really excited about. We also more-or-less stuck to our agenda. In the future, we could probably practice for our technical review more before the presentation... We did not spend a lot of time on our slides or practicing them, since neither of us had much time to spare.
