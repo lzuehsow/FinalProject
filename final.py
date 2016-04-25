@@ -217,6 +217,8 @@ class DesktopModel(object):
 	def spell_check(self):
 		if (self.grid1flag and self.grid4flag and self.grid7flag) and (self.grid2flag == False and self.grid3flag == False and self.grid5flag == False and self.grid6flag == False and self.grid8flag == False and self.grid9flag == False) and (spell_frame <= 10):
 			if spell_frame == 1:
+				pygame.mixer.music.load('SmallFireball.mp3')
+				pygame.mixer.music.play(0)
 				print 'You cast Flipendo!'
 				enemy.DamageTaken(25)
 			enemy.hit = True
@@ -224,6 +226,8 @@ class DesktopModel(object):
 		
 		elif (self.grid3flag and self.grid6flag and self.grid9flag) and (self.grid1flag == False and self.grid2flag == False and self.grid4flag == False and self.grid5flag == False and self.grid7flag == False and self.grid8flag == False) and (spell_frame <= 10):
 			if spell_frame == 1:
+				pygame.mixer.music.load('SmallFireball.mp3')
+				pygame.mixer.music.play(0)
 				print 'You cast Wingardium leviosa!'
 				enemy.DamageTaken(25)
 			enemy.hit = True
@@ -231,6 +235,8 @@ class DesktopModel(object):
 
 		elif (self.grid1flag and self.grid2flag and self.grid4flag and self.grid5flag) and (self.grid3flag == False and self.grid6flag == False and self.grid7flag == False and self.grid8flag == False and self.grid9flag == False) and (spell_frame <= 10):
 			if spell_frame == 1:
+				pygame.mixer.music.load('SmallFireball.mp3')
+				pygame.mixer.music.play(0)
 				print 'You cast Incendio!'
 				enemy.DamageTaken(50)
 			enemy.hit = True
@@ -238,6 +244,8 @@ class DesktopModel(object):
 
 		elif (self.grid2flag and self.grid4flag and self.grid5flag and self.grid6flag and self.grid8flag) and (self.grid1flag == False and self.grid3flag == False and self.grid7flag == False and self.grid9flag == False) and (spell_frame <= 10):
 			if spell_frame == 1:
+				pygame.mixer.music.load('SmallFireball.mp3')
+				pygame.mixer.music.play(0)
 				print 'You cast Avada kedavra!'
 				enemy.DamageTaken(100)
 			enemy.hit = True
@@ -245,6 +253,8 @@ class DesktopModel(object):
 
 		elif (self.grid3flag and self.grid4flag and self.grid5flag and self.grid6flag and self.grid7flag) and (self.grid1flag == False and self.grid2flag == False and self.grid8flag == False and self.grid9flag == False) and (spell_frame <= 10):
 			if spell_frame == 1:
+				pygame.mixer.music.load('SmallFireball.mp3')
+				pygame.mixer.music.play(0)
 				print 'You cast Stupefy!'
 				enemy.DamageTaken(100)
 			enemy.hit = True
@@ -252,6 +262,8 @@ class DesktopModel(object):
 
 		elif (self.grid3flag and self.grid5flag and self.grid6flag and self.grid7flag and self.grid8flag) and (self.grid1flag == False and self.grid2flag == False and self.grid4flag == False and self.grid9flag == False) and (spell_frame <= 10):
 			if spell_frame == 1:
+				pygame.mixer.music.load('SmallFireball.mp3')
+				pygame.mixer.music.play(0)
 				print 'You cast Expelliarmus!'
 				enemy.DamageTaken(100)
 			enemy.hit = True
@@ -262,10 +274,12 @@ class DesktopModel(object):
 			if player.hp > 0:
 				dialogue = ["Voldemort takes a stab at you!", "Voldemort casts a spell-- it narrowly misses you!", "Voldemort realizes he doesn't have a nose and waves his wand in frustration!", "Voldemort screams something unintelligible and hits you with a weak spell!", "Voldemort unleashes a stream of curses! They're not very effective.", "Voldemort pauses for a moment to pick his nose, only to realize he doesn't have one.", "Voldemort calls forth an army of dementors, but they swarm around him excitedly like a bunch of puppies.", "Voldemort yells a hurtful insult at you!", "Voldemort bends down to pick up a tiny pebble and flings it at you! It hits you squarely in the stomach.", "Voldemort throws Nagini at you! Nagini is displeased.", "You tell Voldemort you just want to be friends. He gives you a scalding glare."]
 			
-				if random.randint(0,10) == 5:
+				if random.randint(0,20) == 5:
 					player.hit = True
 					player.DamageTaken(10)
 					dialogue_choose = dialogue[random.randint(0,9)]
+					pygame.mixer.music.load('EvilLaugh.mp3')
+					pygame.mixer.music.play(0)
 					print dialogue_choose
 
 	def spell_clear(self):
