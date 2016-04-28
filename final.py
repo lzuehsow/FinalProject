@@ -105,8 +105,10 @@ class WebCam(object):
 		# What happens next depends on whether the player is still alive or not
 		if player.hp <= 0:
 			enemy.hp = 100
-			screen.fill(49,79,79)
-			# enemy.sprite = pygame.transform.scale(picture, (1200,1400))
+			enemy.x = -700
+			enemy.y = 0
+			screen.fill((49,79,79))
+			view.sprite = pygame.transform.scale(view.sprite, (2100,2300))
 			cv2.rectangle(webcam.frame, (0,0), (600,450), blackColor, -1)
 			cv2.putText(webcam.frame,GameOverText1,(10,30),cv2.FONT_HERSHEY_SIMPLEX,0.9,(255,255,255),3)
 			cv2.putText(webcam.frame,GameOverText2,(200,100),cv2.FONT_HERSHEY_SIMPLEX,0.9,(255,255,255),3)
@@ -115,7 +117,6 @@ class WebCam(object):
 			# img = cv2.imread('gameover.jpg')
 			# cv2.imshow('Game Over', img)
 		else:
-			# enemy.sprite = pygame.transform.scale(picture, (600,720))
 			cv2.rectangle(webcam.frame, (50,10), (550,30), greenColor, -1)
 			cv2.rectangle(webcam.frame, (50,10), ((550 - player.hp),30), redColor, -1)
 
@@ -560,9 +561,13 @@ if __name__ == '__main__':
 			model.spell_clear()
 		if key == ord("r"):
 			# Reset game
+			enemy.x = 25
+			enemy.y = 100
 			enemy.hp = 100
 			player.hp = 500
+
 			model.spell_clear()
+			view.sprite = pygame.transform.scale(view.sprite, (600,720))
 			screen.blit(view.background,(0,0))
 			screen.fill((0,255,0),Rect(10,10,100,20))
 
