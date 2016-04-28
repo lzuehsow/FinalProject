@@ -104,13 +104,18 @@ class WebCam(object):
 
 		# What happens next depends on whether the player is still alive or not
 		if player.hp <= 0:
-			cv2.rectangle(webcam.frame, (0,0), (600,450), (0,0,0), -1)
+			enemy.hp = 100
+			screen.fill(49,79,79)
+			# enemy.sprite = pygame.transform.scale(picture, (1200,1400))
+			cv2.rectangle(webcam.frame, (0,0), (600,450), blackColor, -1)
 			cv2.putText(webcam.frame,GameOverText1,(10,30),cv2.FONT_HERSHEY_SIMPLEX,0.9,(255,255,255),3)
 			cv2.putText(webcam.frame,GameOverText2,(200,100),cv2.FONT_HERSHEY_SIMPLEX,0.9,(255,255,255),3)
+			cv2.putText(webcam.frame,GameOverText3,(10,300),cv2.FONT_HERSHEY_SIMPLEX,0.9,(255,255,255),3)
 			webcam.frame = cv2.flip(webcam.frame, 1)
 			# img = cv2.imread('gameover.jpg')
 			# cv2.imshow('Game Over', img)
 		else:
+			# enemy.sprite = pygame.transform.scale(picture, (600,720))
 			cv2.rectangle(webcam.frame, (50,10), (550,30), greenColor, -1)
 			cv2.rectangle(webcam.frame, (50,10), ((550 - player.hp),30), redColor, -1)
 
@@ -135,7 +140,7 @@ class Calibration(object):
 			pygame.display.update()
 
 			califind = webcam.getcenter(greenLower, greenUpper)
-			cv2.rectangle(webcam.frame, (0,0), (600,450), (0,0,0), -1)
+			cv2.rectangle(webcam.frame, (0,0), (600,450), blackColor, -1)
 
 			A = "Please hold your wand very still!"
 			B =	"The Dueling Association is assembling."
@@ -287,7 +292,7 @@ class Menu(object):
 	def __init__(self):
 		self.screen = screen.fill(whiteColor)
 		self.font = pygame.font.SysFont("monospace", 15)
-		self.text = self.font.render("Play", 5, (0,0,0))
+		self.text = self.font.render("Play", 5, blackColor)
 		self.cursorcolor = blueColor
 		self.running = False
 	def Button(self, x, y, color):
@@ -421,6 +426,7 @@ if __name__ == '__main__':
 	greenColor = pygame.Color(0,255,0)
 	blueColor = pygame.Color(255,0,0)
 	whiteColor = pygame.Color(255,255,255)
+	blackColor = pygame.Color(0,0,0)
 
 	# Set pygame fake desktop size
 	screenwidth = 600
@@ -447,6 +453,7 @@ if __name__ == '__main__':
 
 	GameOverText1 = "You and all of your friends are dead."
 	GameOverText2 = "Congrats."
+	GameOverText3 = "Press R to ressurect and try again."
 
 	# running = False
 	# running = True
