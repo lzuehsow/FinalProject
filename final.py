@@ -105,8 +105,11 @@ class WebCam(object):
 		# What happens next depends on whether the player is still alive or not
 		if player.hp <= 0:
 			cv2.rectangle(webcam.frame, (0,0), (600,450), (0,0,0), -1)
-			img = cv2.imread('gameover.jpg')
-			cv2.imshow('Game Over', img)
+			cv2.putText(webcam.frame,GameOverText1,(10,30),cv2.FONT_HERSHEY_SIMPLEX,0.9,(255,255,255),3)
+			cv2.putText(webcam.frame,GameOverText2,(200,100),cv2.FONT_HERSHEY_SIMPLEX,0.9,(255,255,255),3)
+			webcam.frame = cv2.flip(webcam.frame, 1)
+			# img = cv2.imread('gameover.jpg')
+			# cv2.imshow('Game Over', img)
 		else:
 			cv2.rectangle(webcam.frame, (50,10), (550,30), greenColor, -1)
 			cv2.rectangle(webcam.frame, (50,10), ((550 - player.hp),30), redColor, -1)
@@ -217,9 +220,6 @@ class DesktopModel(object):
 	def spell_check(self):
 		if (self.grid1flag and self.grid4flag and self.grid7flag) and (self.grid2flag == False and self.grid3flag == False and self.grid5flag == False and self.grid6flag == False and self.grid8flag == False and self.grid9flag == False) and (spell_frame <= 10):
 			if spell_frame == 1:
-				pygame.mixer.music.load('SmallFireball.mp3')
-				pygame.mixer.music.set_volume(1.0)
-				pygame.mixer.music.play(0)
 				print 'You cast Flipendo!'
 				enemy.DamageTaken(25)
 			enemy.hit = True
@@ -227,9 +227,6 @@ class DesktopModel(object):
 		
 		elif (self.grid3flag and self.grid6flag and self.grid9flag) and (self.grid1flag == False and self.grid2flag == False and self.grid4flag == False and self.grid5flag == False and self.grid7flag == False and self.grid8flag == False) and (spell_frame <= 10):
 			if spell_frame == 1:
-				pygame.mixer.music.load('SmallFireball.mp3')
-				pygame.mixer.music.set_volume(1.0)
-				pygame.mixer.music.play(0)
 				print 'You cast Wingardium leviosa!'
 				enemy.DamageTaken(25)
 			enemy.hit = True
@@ -237,9 +234,6 @@ class DesktopModel(object):
 
 		elif (self.grid1flag and self.grid2flag and self.grid4flag and self.grid5flag) and (self.grid3flag == False and self.grid6flag == False and self.grid7flag == False and self.grid8flag == False and self.grid9flag == False) and (spell_frame <= 10):
 			if spell_frame == 1:
-				pygame.mixer.music.load('SmallFireball.mp3')
-				pygame.mixer.music.set_volume(1.0)
-				pygame.mixer.music.play(0)
 				print 'You cast Incendio!'
 				enemy.DamageTaken(50)
 			enemy.hit = True
@@ -247,9 +241,6 @@ class DesktopModel(object):
 
 		elif (self.grid2flag and self.grid4flag and self.grid5flag and self.grid6flag and self.grid8flag) and (self.grid1flag == False and self.grid3flag == False and self.grid7flag == False and self.grid9flag == False) and (spell_frame <= 10):
 			if spell_frame == 1:
-				pygame.mixer.music.load('SmallFireball.mp3')
-				pygame.mixer.music.set_volume(1.0)
-				pygame.mixer.music.play(0)
 				print 'You cast Avada kedavra!'
 				enemy.DamageTaken(100)
 			enemy.hit = True
@@ -257,9 +248,6 @@ class DesktopModel(object):
 
 		elif (self.grid3flag and self.grid4flag and self.grid5flag and self.grid6flag and self.grid7flag) and (self.grid1flag == False and self.grid2flag == False and self.grid8flag == False and self.grid9flag == False) and (spell_frame <= 10):
 			if spell_frame == 1:
-				pygame.mixer.music.load('SmallFireball.mp3')
-				pygame.mixer.music.set_volume(1.0)
-				pygame.mixer.music.play(0)
 				print 'You cast Stupefy!'
 				enemy.DamageTaken(100)
 			enemy.hit = True
@@ -267,9 +255,6 @@ class DesktopModel(object):
 
 		elif (self.grid3flag and self.grid5flag and self.grid6flag and self.grid7flag and self.grid8flag) and (self.grid1flag == False and self.grid2flag == False and self.grid4flag == False and self.grid9flag == False) and (spell_frame <= 10):
 			if spell_frame == 1:
-				pygame.mixer.music.load('SmallFireball.mp3')
-				pygame.mixer.music.set_volume(1.0)
-				pygame.mixer.music.play(0)
 				print 'You cast Expelliarmus!'
 				enemy.DamageTaken(100)
 			enemy.hit = True
@@ -280,14 +265,10 @@ class DesktopModel(object):
 			if player.hp > 0:
 				dialogue = ["Voldemort takes a stab at you!", "Voldemort casts a spell-- it narrowly misses you!", "Voldemort realizes he doesn't have a nose and waves his wand in frustration!", "Voldemort screams something unintelligible and hits you with a weak spell!", "Voldemort unleashes a stream of curses! They're not very effective.", "Voldemort pauses for a moment to pick his nose, only to realize he doesn't have one.", "Voldemort calls forth an army of dementors, but they swarm around him excitedly like a bunch of puppies.", "Voldemort yells a hurtful insult at you!", "Voldemort bends down to pick up a tiny pebble and flings it at you! It hits you squarely in the stomach.", "Voldemort throws Nagini at you! Nagini is displeased.", "You tell Voldemort you just want to be friends. He gives you a scalding glare."]
 			
-				if random.randint(0,20) == 5:
+				if random.randint(0,10) == 5:
 					player.hit = True
 					player.DamageTaken(10)
 					dialogue_choose = dialogue[random.randint(0,9)]
-					if random.randint(0,100) >= 95:
-						pygame.mixer.music.load('EvilLaugh.mp3')
-						pygame.mixer.music.set_volume(1.0)
-						pygame.mixer.music.play(0)
 					print dialogue_choose
 
 	def spell_clear(self):
@@ -307,6 +288,8 @@ class Menu(object):
 		self.screen = screen.fill(whiteColor)
 		self.font = pygame.font.SysFont("monospace", 15)
 		self.text = self.font.render("Play", 5, (0,0,0))
+		self.cursorcolor = blueColor
+		self.running = False
 	def Button(self, x, y, color):
 		self.x = x
 		self.y = y
@@ -329,8 +312,8 @@ class PygameView(object):
 
 		# Load background png and post to screen
 		background = pygame.image.load(background).convert()
-		background = pygame.transform.scale(background, (screenwidth,screenheight))
-		screen.blit(background,(0,0))
+		self.background = pygame.transform.scale(background, (screenwidth,screenheight))
+		screen.blit(self.background,(0,0))
 
 		# Lead the win screen
 		self.winscreen = pygame.image.load(winscreen).convert()
@@ -415,8 +398,10 @@ class Controller(object):
 
 			elif event.type == BUTTON:
 				(x,y) = center
+				menu.cursorcolor = redColor
 				if x > 25 and x < 225 and y > 25 and y < 75:
-					running = True
+					menu.running = True
+				print menu.running
 
 		pygame.event.clear()
 
@@ -460,7 +445,10 @@ if __name__ == '__main__':
 	model = DesktopModel()
 	master = Controller(model)
 
-	running = False
+	GameOverText1 = "You and all of your friends are dead."
+	GameOverText2 = "Congrats."
+
+	# running = False
 	# running = True
 
 	GRID = pygame.USEREVENT+2
@@ -477,19 +465,23 @@ if __name__ == '__main__':
 # ****************** RUNTIME LOOP ****************** #
 	# This is the main loop of the program. 
 
-	while running == False and frame <= 100:
+	while frame <= 100:
+		if menu.running == True:
+			break
 
 		gotcenter = webcam.getcenter(greenLower, greenUpper)
+
 		if gotcenter == None:
 			master.selected = False
 		else:
 			center = gotcenter[0]
 			radius = gotcenter[1]
-			print radius
-			print calradi
+			pygame.draw.circle(screen,menu.cursorcolor,center,3,0)
+			# print radius
+			# print calradi
 			if radius >= calradi + 15:
 				pygame.event.post(button_event)
-			
+
 		menu.update()
 		# webcam.frame = cv2.flip(webcam.frame, 1)
 		cv2.circle(webcam.frame, center, 5, blueColor, -1)
@@ -498,14 +490,15 @@ if __name__ == '__main__':
 
 		master.process_events()
 		frame += 1
+		print menu.running
 		time.sleep(.001)
 
-	if running == True:
+	if menu.running == True:
 		view = PygameView(model, screen, 'forbiddenforest.jpeg', 'win.png', 'volde.png', 'flame.png')
 		player = Player()
 		enemy = Enemy(25, 100)
 
-	while running:
+	while menu.running:
 		if enemy.hp <= 0:
 			view.wongame()
 		else:
@@ -556,7 +549,18 @@ if __name__ == '__main__':
 				cv2.destroyAllWindows()
 				master.close()
 		if key == ord("c"):
+			# Clear spell chain
 			model.spell_clear()
+		if key == ord("r"):
+			# Reset game
+			enemy.hp = 100
+			player.hp = 500
+			model.spell_clear()
+			screen.blit(view.background,(0,0))
+			screen.fill((0,255,0),Rect(10,10,100,20))
+
+			pygame.display.update()
+
 			
 # ****************** CODE FOR STUFF WE MIGHT NOT NEED ****************** #
 
