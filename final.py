@@ -287,14 +287,14 @@ class DesktopModel(object):
 
 		else:
 			enemy.hit = False
-			if player.hp > 0:
+			if player.hp > 0 and menu.gamerunning == True:
 				opponent = ["Voldemort", "Umbridge", "Malfoy", "Bellatrix"]
 				dialogue = ["{} takes a stab at you!".format(opponent[self.randominteger]), "{} casts a spell-- it narrowly misses you!".format(opponent[self.randominteger]), "{} screams something unintelligible and hits you with a weak spell!".format(opponent[self.randominteger]), "{} unleashes a stream of curses! They're not very effective.".format(opponent[self.randominteger]), "{} calls forth an army of dementors, but they swarm around {} excitedly like a bunch of puppies.".format(opponent[self.randominteger], opponent[self.randominteger]), "{} yells a hurtful insult at you!".format(opponent[self.randominteger]), "{} bends down to pick up a tiny pebble and flings it at you! It hits you squarely in the stomach.".format(opponent[self.randominteger]), "{} throws Nagini at you! Nagini is displeased.".format(opponent[self.randominteger]), "You tell {} you just want to be friends. {} gives you a scalding glare.".format(opponent[self.randominteger], opponent[self.randominteger])]
 
 				if self.randominteger == 0: # Voldemort
 					if random.randint(0,100) == 5:
 						player.hit = True
-						player.DamageTaken(100)
+						player.DamageTaken(125)
 						pygame.mixer.music.load('require.mp3')
 						pygame.mixer.music.play(0)
 						dialogue_choose = dialogue[random.randint(0,8)]
@@ -312,7 +312,7 @@ class DesktopModel(object):
 				if self.randominteger == 2: # Malfoy
 					if random.randint(0,100) == 5:
 						player.hit = True
-						player.DamageTaken(50)
+						player.DamageTaken(20)
 						pygame.mixer.music.load('horror_demonic_laugh.mp3')
 						pygame.mixer.music.play(0)
 						dialogue_choose = dialogue[random.randint(0,8)]
@@ -321,7 +321,7 @@ class DesktopModel(object):
 				if self.randominteger == 3: # Bellatrix
 					if random.randint(0,100) == 5:
 						player.hit = True
-						player.DamageTaken(50)
+						player.DamageTaken(100)
 						pygame.mixer.music.load('giggle.mp3')
 						pygame.mixer.music.play(0)
 						dialogue_choose = dialogue[random.randint(0,8)]
@@ -343,18 +343,25 @@ class Menu(object):
 	def __init__(self):
 		self.screen = screen.fill(whiteColor)
 		self.font = pygame.font.SysFont("monospace", 15)
-		self.text = self.font.render("Play", 5, blackColor)
 		self.cursorcolor = blueColor
-		self.running = False
-	def Button(self, x, y, color):
+		self.gamerunning = False
+		self.tutorielrunning = False # The thought of exercise fills you with... determination!
+	def Button(self, x, y, color, text = "Text"):
 		self.x = x
 		self.y = y
 		self.width = 200
 		self.height = 50
+		self.text = self.font.render(text, 5, blackColor)
+
 		screen.fill(color,Rect(self.x,self.y,self.width,self.height))
+
 	def update(self):
-		tutorielbutton = menu.Button(25,25,blueColor)
-		screen.blit(self.text, (35, 35))
+		gamebutton = menu.Button(25,25,greenColor, "Random Mode")
+		screen.blit(self.text, (self.x + 10, self.y + 10))
+
+		tutorielbutton = menu.Button(25,125,blueColor, "Tutorial Mode")
+		screen.blit(self.text, (self.x + 10, self.y + 10))
+
 		pygame.display.update()
 
 
@@ -454,12 +461,16 @@ class Controller(object):
 
 			elif event.type == BUTTON:
 				(x,y) = center
-				print center
-				# x = 600 - x
+				# print center
+
 				menu.cursorcolor = redColor
-				if x > 375 and x < 575 and y > 25 and y < 100:
-					menu.running = True
-				# print menu.running
+
+				if x > 375 and x < 575 and y > 25 and y < 75:
+					if menu.tutorielrunning == False:
+						menu.gamerunning = True
+				elif x > 375 and x < 575 and y > 125 and y < 175:
+					if menu.gamerunning == False:
+						menu.tutorielrunning = True
 			else:
 				menu.cursorcolor = blueColor
 
@@ -528,7 +539,9 @@ if __name__ == '__main__':
 	# This is the main loop of the program. 
 
 	while frame <= 100:
-		if menu.running == True:
+		if menu.gamerunning == True:
+			break
+		elif menu.tutorielrunning == True:
 			break
 
 		gotcenter = webcam.getcenter(greenLower, greenUpper)
@@ -556,17 +569,24 @@ if __name__ == '__main__':
 
 		master.process_events()
 		frame += 1
-		print menu.running
+		# print menu.gamerunning
 		time.sleep(.001)
 
-	if menu.running == True:
+	if menu.tutorielrunning == True:
+		background = 'umbridgeoffice.png'
+		opponent = 'voldemort.png'
+		view = PygameView(model, screen, background, 'win.png', opponent, 'flame.png')
+		player = Player()
+		enemy = Enemy(25, 100)
+
+	if menu.gamerunning == True:
 		background = ['chamberofsecrets.png', 'forbiddenforest.jpeg', 'greathall.png', 'ministryofmagicatrium.png', 'umbridgeoffice.png']
 		opponent = ['voldemort.png', 'umbridge.png', 'malfoy.png', 'bellatrix.png']
 		view = PygameView(model, screen, background[random.randint(0,4)], 'win.png', opponent[model.randominteger], 'flame.png')
 		player = Player()
 		enemy = Enemy(25, 100)
 
-	while menu.running:
+	while menu.gamerunning or menu.tutorielrunning:
 		if enemy.hp <= 0:
 			view.wongame()
 		else:
