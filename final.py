@@ -222,6 +222,7 @@ class DesktopModel(object):
 		self.grid7flag = False
 		self.grid8flag = False
 		self.grid9flag = False
+		self.randominteger = random.randint(0,3)
 
 	def spell_check(self):
 		if (self.grid1flag and self.grid4flag and self.grid7flag) and (self.grid2flag == False and self.grid3flag == False and self.grid5flag == False and self.grid6flag == False and self.grid8flag == False and self.grid9flag == False) and (spell_frame <= 10):
@@ -287,16 +288,17 @@ class DesktopModel(object):
 		else:
 			enemy.hit = False
 			if player.hp > 0:
-				dialogue = ["Voldemort takes a stab at you!", "Voldemort casts a spell-- it narrowly misses you!", "Voldemort realizes he doesn't have a nose and waves his wand in frustration!", "Voldemort screams something unintelligible and hits you with a weak spell!", "Voldemort unleashes a stream of curses! They're not very effective.", "Voldemort pauses for a moment to pick his nose, only to realize he doesn't have one.", "Voldemort calls forth an army of dementors, but they swarm around him excitedly like a bunch of puppies.", "Voldemort yells a hurtful insult at you!", "Voldemort bends down to pick up a tiny pebble and flings it at you! It hits you squarely in the stomach.", "Voldemort throws Nagini at you! Nagini is displeased.", "You tell Voldemort you just want to be friends. He gives you a scalding glare."]
+				opponent = ["Voldemort", "Umbridge", "Malfoy", "Bellatrix"]
+				dialogue = ["{} takes a stab at you!".format(opponent[self.randominteger]), "{} casts a spell-- it narrowly misses you!".format(opponent[self.randominteger]), "{} screams something unintelligible and hits you with a weak spell!".format(opponent[self.randominteger]), "{} unleashes a stream of curses! They're not very effective.".format(opponent[self.randominteger]), "{} calls forth an army of dementors, but they swarm around {} excitedly like a bunch of puppies.".format(opponent[self.randominteger], opponent[self.randominteger]), "{} yells a hurtful insult at you!".format(opponent[self.randominteger]), "{} bends down to pick up a tiny pebble and flings it at you! It hits you squarely in the stomach.".format(opponent[self.randominteger]), "{} throws Nagini at you! Nagini is displeased.".format(opponent[self.randominteger]), "You tell {} you just want to be friends. {} gives you a scalding glare.".format(opponent[self.randominteger], opponent[self.randominteger])]
 			
 				if random.randint(0,100) == 5:
 					player.hit = True
-					player.DamageTaken(10)
+					player.DamageTaken(20)
 					if random.randint(0,100) == 5:
 						pygame.mixer.music.load('EvilLaugh.mp3')
 						pygame.mixer.music.set_volume(1.0)
 						pygame.mixer.music.play(0)
-					dialogue_choose = dialogue[random.randint(0,9)]
+					dialogue_choose = dialogue[random.randint(0,8)]
 					print dialogue_choose
 
 	def spell_clear(self):
@@ -528,7 +530,7 @@ if __name__ == '__main__':
 	if menu.running == True:
 		background = ['chamberofsecrets.png', 'forbiddenforest.jpeg', 'greathall.png', 'ministryofmagicatrium.png', 'umbridgeoffice.png']
 		opponent = ['voldemort.png', 'umbridge.png', 'malfoy.png', 'bellatrix.png']
-		view = PygameView(model, screen, background[random.randint(0,4)], 'win.png', opponent[random.randint(0,3)], 'flame.png')
+		view = PygameView(model, screen, background[random.randint(0,4)], 'win.png', opponent[model.randominteger], 'flame.png')
 		player = Player()
 		enemy = Enemy(25, 100)
 
