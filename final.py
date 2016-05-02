@@ -351,7 +351,7 @@ class Menu(object):
 		self.y = y
 		self.width = 200
 		self.height = 50
-		self.text = self.font.render(text, 5, blackColor)
+		self.text = self.font.render(text, 20, blackColor)
 
 		screen.fill(color,Rect(self.x,self.y,self.width,self.height))
 
@@ -360,6 +360,9 @@ class Menu(object):
 		screen.blit(self.text, (self.x + 10, self.y + 10))
 
 		tutorielbutton = menu.Button(25,125,blueColor, "Tutorial Mode")
+		screen.blit(self.text, (self.x + 10, self.y + 10))
+
+		quitbutton = menu.Button(25,225,redColor, "Quit")
 		screen.blit(self.text, (self.x + 10, self.y + 10))
 
 		pygame.display.update()
@@ -471,8 +474,14 @@ class Controller(object):
 				elif x > 375 and x < 575 and y > 125 and y < 175:
 					if menu.gamerunning == False:
 						menu.tutorielrunning = True
-			else:
-				menu.cursorcolor = blueColor
+				elif x > 375 and x < 575 and y > 225 and y < 275:
+					if menu.gamerunning == False and menu.tutorielrunning == False:
+						running = False
+
+						# Release the camera, close open windows
+						webcam.camera.release()
+						cv2.destroyAllWindows()
+						master.close()
 
 		pygame.event.clear()
 
@@ -573,8 +582,8 @@ if __name__ == '__main__':
 		time.sleep(.001)
 
 	if menu.tutorielrunning == True:
-		background = 'umbridgeoffice.png'
-		opponent = 'voldemort.png'
+		background = 'house.jpg'
+		opponent = 'gnome.png'
 		view = PygameView(model, screen, background, 'win.png', opponent, 'flame.png')
 		player = Player()
 		enemy = Enemy(25, 100)
