@@ -408,6 +408,8 @@ class Controller(object):
 				if x > 25 and x < 225 and y > 25 and y < 75:
 					menu.running = True
 				print menu.running
+			else:
+				menu.cursorcolor = blueColor
 
 		pygame.event.clear()
 
