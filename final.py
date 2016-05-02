@@ -173,11 +173,6 @@ class Calibration(object):
 				calibrating = False
 				return calradi
 
-# class Tutoriel(object):
-# 	def __init__(self):
-# 		self = self
-# ffff
-
 
 class Player(object):
 	"""Represents you, the player!"""
@@ -225,65 +220,35 @@ class DesktopModel(object):
 		self.randominteger = random.randint(0,3)
 
 	def spell_check(self):
-		if (self.grid1flag and self.grid4flag and self.grid7flag) and (self.grid2flag == False and self.grid3flag == False and self.grid5flag == False and self.grid6flag == False and self.grid8flag == False and self.grid9flag == False) and (spell_frame <= 10):
-			if spell_frame == 1:
-				print 'You cast Flipendo!'
-				pygame.mixer.music.load('SmallFireball.mp3')
-				pygame.mixer.music.set_volume(1.0)
-				pygame.mixer.music.play(0)
-				enemy.DamageTaken(25)
+		if (self.grid1flag and self.grid4flag and self.grid7flag) and (self.grid2flag == False and self.grid3flag == False and self.grid5flag == False and self.grid6flag == False and self.grid8flag == False and self.grid9flag == False) and (spell_frame <= 10):		
 			enemy.hit = True
-			return
-		
+			return 1
+			# Flipendo
+		# fffff
 		elif (self.grid3flag and self.grid6flag and self.grid9flag) and (self.grid1flag == False and self.grid2flag == False and self.grid4flag == False and self.grid5flag == False and self.grid7flag == False and self.grid8flag == False) and (spell_frame <= 10):
-			if spell_frame == 1:
-				print 'You cast Wingardium leviosa!'
-				pygame.mixer.music.load('SmallFireball.mp3')
-				pygame.mixer.music.set_volume(1.0)
-				pygame.mixer.music.play(0)
-				enemy.DamageTaken(25)
 			enemy.hit = True
-			return
+			return 2
+			# Wingardium Leviosa
 
 		elif (self.grid1flag and self.grid2flag and self.grid4flag and self.grid5flag) and (self.grid3flag == False and self.grid6flag == False and self.grid7flag == False and self.grid8flag == False and self.grid9flag == False) and (spell_frame <= 10):
-			if spell_frame == 1:
-				print 'You cast Incendio!'
-				pygame.mixer.music.load('SmallFireball.mp3')
-				pygame.mixer.music.set_volume(1.0)
-				pygame.mixer.music.play(0)
-				enemy.DamageTaken(50)
 			enemy.hit = True
-			return
+			return 3
+			# Incendio
 
 		elif (self.grid2flag and self.grid4flag and self.grid5flag and self.grid6flag and self.grid8flag) and (self.grid1flag == False and self.grid3flag == False and self.grid7flag == False and self.grid9flag == False) and (spell_frame <= 10):
-			if spell_frame == 1:
-				print 'You cast Avada kedavra!'
-				pygame.mixer.music.load('SmallFireball.mp3')
-				pygame.mixer.music.set_volume(1.0)
-				pygame.mixer.music.play(0)
-				enemy.DamageTaken(100)
 			enemy.hit = True
-			return
+			return 4
+			# Avada Kedavra
 
 		elif (self.grid3flag and self.grid4flag and self.grid5flag and self.grid6flag and self.grid7flag) and (self.grid1flag == False and self.grid2flag == False and self.grid8flag == False and self.grid9flag == False) and (spell_frame <= 10):
-			if spell_frame == 1:
-				print 'You cast Stupefy!'
-				pygame.mixer.music.load('SmallFireball.mp3')
-				pygame.mixer.music.set_volume(1.0)
-				pygame.mixer.music.play(0)
-				enemy.DamageTaken(100)
 			enemy.hit = True
-			return
+			return 5
+			# Stupefy
 
 		elif (self.grid3flag and self.grid5flag and self.grid6flag and self.grid7flag and self.grid8flag) and (self.grid1flag == False and self.grid2flag == False and self.grid4flag == False and self.grid9flag == False) and (spell_frame <= 10):
-			if spell_frame == 1:
-				print 'You cast Expelliarmus!'
-				pygame.mixer.music.load('SmallFireball.mp3')
-				pygame.mixer.music.set_volume(1.0)
-				pygame.mixer.music.play(0)
-				enemy.DamageTaken(100)
 			enemy.hit = True
-			return
+			return 6
+			# Expelliarmus
 
 		else:
 			enemy.hit = False
@@ -500,6 +465,7 @@ if __name__ == '__main__':
 	redColor = pygame.Color(0,0,255)
 	greenColor = pygame.Color(0,255,0)
 	blueColor = pygame.Color(255,0,0)
+	purpleColor = pygame.Color(148,0,211)
 	whiteColor = pygame.Color(255,255,255)
 	blackColor = pygame.Color(0,0,0)
 
@@ -566,7 +532,6 @@ if __name__ == '__main__':
 			pygame.draw.circle(screen,menu.cursorcolor,(600-x,y),3,0)
 			# print radius
 			# print calradi
-			# fffffff
 			if radius >= calradi + 15:
 				pygame.event.post(button_event)
 
@@ -588,6 +553,8 @@ if __name__ == '__main__':
 		player = Player()
 		enemy = Enemy(25, 100)
 
+		spells = ['Flipendo!', 'Wingardium Leviosa', 'Incendio', 'Avada Kedavra', 'Stupefy', 'Expelliarmus']
+
 	if menu.gamerunning == True:
 		background = ['chamberofsecrets.png', 'forbiddenforest.jpeg', 'greathall.png', 'ministryofmagicatrium.png', 'umbridgeoffice.png']
 		opponent = ['voldemort.png', 'umbridge.png', 'malfoy.png', 'bellatrix.png']
@@ -595,12 +562,27 @@ if __name__ == '__main__':
 		player = Player()
 		enemy = Enemy(25, 100)
 
+		spells = ['Flipendo!', 'Wingardium Leviosa', 'Incendio', 'Avada Kedavra', 'Stupefy', 'Expelliarmus']
+
 	while menu.gamerunning or menu.tutorielrunning:
 		if enemy.hp <= 0:
 			view.wongame()
 		else:
+			# fffff
 			view.update()
-			model.spell_check()
+			# model.spell_check()
+			spellnum = model.spell_check()
+			if spell_frame == 1:
+				print 'You cast ', spells[spellnum]
+				pygame.mixer.music.load('SmallFireball.mp3')
+				pygame.mixer.music.set_volume(1.0)
+				pygame.mixer.music.play(0)
+				if 1 <= spellnum and spellnum <= 2:
+					enemy.DamageTaken(25)
+				if spellnum == 3:
+					enemy.DamageTaken(50)
+				if 4 <= spellnum and spellnum <= 6:
+					enemy.DamageTaken(100)
 
 		# Check for spells
 			if enemy.hit: #if a player's offensive spell is detected, add one to spell frame count
