@@ -290,16 +290,42 @@ class DesktopModel(object):
 			if player.hp > 0:
 				opponent = ["Voldemort", "Umbridge", "Malfoy", "Bellatrix"]
 				dialogue = ["{} takes a stab at you!".format(opponent[self.randominteger]), "{} casts a spell-- it narrowly misses you!".format(opponent[self.randominteger]), "{} screams something unintelligible and hits you with a weak spell!".format(opponent[self.randominteger]), "{} unleashes a stream of curses! They're not very effective.".format(opponent[self.randominteger]), "{} calls forth an army of dementors, but they swarm around {} excitedly like a bunch of puppies.".format(opponent[self.randominteger], opponent[self.randominteger]), "{} yells a hurtful insult at you!".format(opponent[self.randominteger]), "{} bends down to pick up a tiny pebble and flings it at you! It hits you squarely in the stomach.".format(opponent[self.randominteger]), "{} throws Nagini at you! Nagini is displeased.".format(opponent[self.randominteger]), "You tell {} you just want to be friends. {} gives you a scalding glare.".format(opponent[self.randominteger], opponent[self.randominteger])]
-			
-				if random.randint(0,100) == 5:
-					player.hit = True
-					player.DamageTaken(20)
+
+				if self.randominteger == 0: # Voldemort
 					if random.randint(0,100) == 5:
-						pygame.mixer.music.load('EvilLaugh.mp3')
-						pygame.mixer.music.set_volume(1.0)
+						player.hit = True
+						player.DamageTaken(100)
+						pygame.mixer.music.load('require.mp3')
 						pygame.mixer.music.play(0)
-					dialogue_choose = dialogue[random.randint(0,8)]
-					print dialogue_choose
+						dialogue_choose = dialogue[random.randint(0,8)]
+						print dialogue_choose
+
+				if self.randominteger == 1: # Umbridge
+					if random.randint(0,100) == 5:
+						player.hit = True
+						player.DamageTaken(50)
+						pygame.mixer.music.load('goodbye.mp3')
+						pygame.mixer.music.play(0)
+						dialogue_choose = dialogue[random.randint(0,8)]
+						print dialogue_choose
+
+				if self.randominteger == 2: # Malfoy
+					if random.randint(0,100) == 5:
+						player.hit = True
+						player.DamageTaken(50)
+						pygame.mixer.music.load('horror_demonic_laugh.mp3')
+						pygame.mixer.music.play(0)
+						dialogue_choose = dialogue[random.randint(0,8)]
+						print dialogue_choose
+
+				if self.randominteger == 3: # Bellatrix
+					if random.randint(0,100) == 5:
+						player.hit = True
+						player.DamageTaken(50)
+						pygame.mixer.music.load('giggle.mp3')
+						pygame.mixer.music.play(0)
+						dialogue_choose = dialogue[random.randint(0,8)]
+						print dialogue_choose
 
 	def spell_clear(self):
 		model.grid1flag = False
@@ -431,7 +457,7 @@ class Controller(object):
 				menu.cursorcolor = redColor
 				if x > 25 and x < 225 and y > 25 and y < 75:
 					menu.running = True
-				print menu.running
+				# print menu.running
 			else:
 				menu.cursorcolor = blueColor
 
@@ -524,7 +550,7 @@ if __name__ == '__main__':
 
 		master.process_events()
 		frame += 1
-		print menu.running
+		# print menu.running
 		time.sleep(.001)
 
 	if menu.running == True:
@@ -600,3 +626,82 @@ if __name__ == '__main__':
 			screen.fill((0,255,0),Rect(10,10,100,20))
 
 			pygame.display.update()
+
+			
+# ****************** CODE FOR STUFF WE MIGHT NOT NEED ****************** #
+
+# class Mouse(object):
+# 	"""Represents your spell trail"""
+# 	def __init__(self,color,x=50,y=50,selected=False):
+# 		self.x = x
+# 		self.y = y
+# 		self.color = color
+# 		self.selected = selected
+
+# 	def set_pos(self, x, y):
+# 		self.x = x
+# 		self.y = y
+# 		# self.color = redColor
+
+# 	def Move(self):
+# 		gotcenter = webcam.getcenter(greenLower, greenUpper)
+# 		if gotcenter == None:
+# 			pass
+# 		else:
+# 			center = gotcenter[0]
+# 			self.x = center[0]
+# 			self.y = center[1]
+# 		self.set_pos(self.x, self.y)
+
+
+
+# print model.store_flags
+
+	# def list_grids(self, store):
+	# 	if x <= 200 and y <= 150:
+	# 		current_grid = 1
+	# 		if current_grid != store[-1]:
+	# 			store.append(current_grid)
+	# 	if (x >= 200 and x <= 400) and y <=150:
+	# 		current_grid = 2
+	# 		if current_grid != store[-1]:
+	# 			store.append(current_grid)
+	# 	if x >= 400 and y <= 150:
+	# 		current_grid = 3
+	# 		if current_grid != store[-1]:
+	# 			store.append(current_grid)
+	# 	if x <= 200 and (y >= 150 and y <=300):
+	# 		current_grid = 4
+	# 		if current_grid != store[-1]:
+	# 			store.append(current_grid)
+	# 	if (x >= 200 and x <= 400) and (y >= 150 and y <=300):
+	# 		current_grid = 5
+	# 		if current_grid != store[-1]:
+	# 			store.append(current_grid)
+	# 	if x >= 400 and (y >= 150 and y <= 300):
+	# 		current_grid = 6
+	# 		if current_grid != store[-1]:
+	# 			store.append(current_grid)
+	# 	if x <= 200 and y >= 300:
+	# 		current_grid = 7
+	# 		if current_grid != store[-1]:
+	# 			store.append(current_grid)
+	# 	if (x >= 200 and x <= 400) and y >= 300:
+	# 		current_grid = 8
+	# 		if current_grid != store[-1]:
+	# 			store.append(current_grid)
+	# 	if x >= 400 and y >= 300:
+	# 		current_grid = 9
+	# 		if current_grid != store[-1]:
+	# 			store.append(current_grid)
+
+	# def store_flags(self):
+	# 	store = []
+
+	# 	if event.type == GRID:
+	# 		if len(store) <= 4:
+	# 			list_grids(store)
+	# 		else:
+	# 			store.remove(store[0])
+	# 			list_grids(store)
+	# 	return store 
