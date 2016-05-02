@@ -574,15 +574,19 @@ if __name__ == '__main__':
 			spellnum = model.spell_check()
 			if spell_frame == 1:
 				print 'You cast ', spells[spellnum]
-				pygame.mixer.music.load('SmallFireball.mp3')
-				pygame.mixer.music.set_volume(1.0)
-				pygame.mixer.music.play(0)
+			
 				if 1 <= spellnum and spellnum <= 2:
 					enemy.DamageTaken(25)
+					pygame.mixer.music.load('Swooshing.mp3')
 				if spellnum == 3:
 					enemy.DamageTaken(50)
+					pygame.mixer.music.load('SmallFireball.mp3')
 				if 4 <= spellnum and spellnum <= 6:
 					enemy.DamageTaken(100)
+					pygame.mixer.music.load('Gun.mp3')
+
+				pygame.mixer.music.set_volume(1.0)
+				pygame.mixer.music.play(0)
 
 		# Check for spells
 			if enemy.hit: #if a player's offensive spell is detected, add one to spell frame count
