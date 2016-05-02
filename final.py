@@ -454,8 +454,10 @@ class Controller(object):
 
 			elif event.type == BUTTON:
 				(x,y) = center
+				print center
+				# x = 600 - x
 				menu.cursorcolor = redColor
-				if x > 25 and x < 225 and y > 25 and y < 75:
+				if x > 375 and x < 575 and y > 25 and y < 100:
 					menu.running = True
 				# print menu.running
 			else:
@@ -536,21 +538,25 @@ if __name__ == '__main__':
 		else:
 			center = gotcenter[0]
 			radius = gotcenter[1]
-			pygame.draw.circle(screen,menu.cursorcolor,center,3,0)
+
+			(x,y) = center
+
+			pygame.draw.circle(screen,menu.cursorcolor,(600-x,y),3,0)
 			# print radius
 			# print calradi
+			# fffffff
 			if radius >= calradi + 15:
 				pygame.event.post(button_event)
 
 		menu.update()
-		# webcam.frame = cv2.flip(webcam.frame, 1)
-		cv2.circle(webcam.frame, center, 5, blueColor, -1)
+		webcam.frame = cv2.flip(webcam.frame, 1)
+		cv2.circle(webcam.frame, (600-x,y), 5, blueColor, -1)
 		cv2.imshow("Frame",webcam.frame)
 		key = cv2.waitKey(1) & 0xFF
 
 		master.process_events()
 		frame += 1
-		# print menu.running
+		print menu.running
 		time.sleep(.001)
 
 	if menu.running == True:
