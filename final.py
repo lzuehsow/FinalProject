@@ -100,7 +100,7 @@ class WebCam(object):
 			cv2.rectangle(webcam.frame,(0,300),(200,450),greenColor,5)
 
 		# Draw a dot to represent the wand's coordinates
-		cv2.circle(webcam.frame, center, 5, cursorcolor, -1)
+		cv2.circle(webcam.frame, center, 5, redColor, -1)
 
 		# What happens next depends on whether the player is still alive or not
 		if player.hp <= 0:
@@ -361,7 +361,7 @@ class PygameView(object):
 
 		# Load enemy sprite png
 		self.sprite = pygame.image.load(sprite).convert_alpha()
-		self.sprite = pygame.transform.scale(self.sprite, (600,720))
+		self.sprite = pygame.transform.scale(self.sprite, (400,720))
 
 		# Load spell damage animation png
 		self.explosion = pygame.image.load(explosion).convert_alpha()
@@ -663,7 +663,7 @@ if __name__ == '__main__':
 			player.hp = 500
 
 			model.spell_clear()
-			view.sprite = pygame.transform.scale(view.sprite, (600,720))
+			view.sprite = pygame.transform.scale(view.sprite, (400,720))
 			screen.blit(view.background,(0,0))
 			screen.fill((0,255,0),Rect(10,10,100,20))
 
