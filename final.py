@@ -361,11 +361,11 @@ class PygameView(object):
 
 		# Load enemy sprite png
 		self.sprite = pygame.image.load(sprite).convert_alpha()
-		self.sprite = pygame.transform.scale(self.sprite, (400,720))
+		self.sprite = pygame.transform.scale(self.sprite, (600,450))
 
 		# Load spell damage animation png
 		self.explosion = pygame.image.load(explosion).convert_alpha()
-		self.explosion = pygame.transform.scale(self.explosion, (200,200))
+		self.explosion = pygame.transform.scale(self.explosion, (150,150))
 
 		# Draw the enemy's HP bar
 		screen.fill((0,255,0),Rect(10,10,100,20))
@@ -377,7 +377,7 @@ class PygameView(object):
 		"""Draw the game state to the screen"""
 		# Enemy spell damage animation
 		if enemy.hit and (spell_frame <= 10):
-			screen.blit(self.explosion,(enemy.x + 200,enemy.y + 150))
+			screen.blit(self.explosion,(enemy.x + 230,enemy.y + 110))
 		else:
 			screen.blit(self.sprite,(enemy.x,enemy.y))
 
@@ -663,7 +663,7 @@ if __name__ == '__main__':
 			player.hp = 500
 
 			model.spell_clear()
-			view.sprite = pygame.transform.scale(view.sprite, (400,720))
+			view.sprite = pygame.transform.scale(view.sprite, (600,450))
 			screen.blit(view.background,(0,0))
 			screen.fill((0,255,0),Rect(10,10,100,20))
 
