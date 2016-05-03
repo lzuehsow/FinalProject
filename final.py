@@ -100,7 +100,7 @@ class WebCam(object):
 			cv2.rectangle(webcam.frame,(0,300),(200,450),greenColor,5)
 
 		# Draw a dot to represent the wand's coordinates
-		cv2.circle(webcam.frame, center, 5, blueColor, -1)
+		cv2.circle(webcam.frame, center, 5, cursorcolor, -1)
 
 		# What happens next depends on whether the player is still alive or not
 		if player.hp <= 0:
@@ -306,8 +306,13 @@ class DesktopModel(object):
 
 class Menu(object):
 	def __init__(self):
-		self.screen = screen.fill(whiteColor)
+		self.screen = screen.fill((173,216,230))
 		self.font = pygame.font.SysFont("monospace", 15)
+
+		logo = pygame.image.load('logo.png').convert_alpha()
+		logo = pygame.transform.scale(logo, (300,300))
+		screen.blit(logo,(300,100))
+
 
 		self.cursorcolor = blueColor
 
@@ -325,13 +330,13 @@ class Menu(object):
 		screen.fill(color,Rect(self.x,self.y,self.width,self.height))
 
 	def update(self):
-		gamebutton = menu.Button(25,25,greenColor, "Random Mode")
+		gamebutton = menu.Button(25,25,whiteColor, "Random Mode")
 		screen.blit(self.text, (self.x + 10, self.y + 10))
 
-		tutorielbutton = menu.Button(25,125,blueColor, "Tutorial Mode")
+		tutorielbutton = menu.Button(25,125,(100,149,237), "Tutorial Mode")
 		screen.blit(self.text, (self.x + 10, self.y + 10))
 
-		quitbutton = menu.Button(25,225,redColor, "Quit")
+		quitbutton = menu.Button(25,225,(70,130,180), "Quit")
 		screen.blit(self.text, (self.x + 10, self.y + 10))
 
 		pygame.display.update()
@@ -434,9 +439,6 @@ class Controller(object):
 
 			elif event.type == BUTTON:
 				(x,y) = center
-				# print center
-
-				menu.cursorcolor = redColor
 
 				if x > 375 and x < 575 and y > 25 and y < 75:
 					if menu.tutorielrunning == False:
@@ -452,7 +454,6 @@ class Controller(object):
 						webcam.camera.release()
 						cv2.destroyAllWindows()
 						master.close()
-
 		pygame.event.clear()
 
 	def close(self):
@@ -518,7 +519,7 @@ if __name__ == '__main__':
 # ****************** RUNTIME LOOP ****************** #
 	# This is the main loop of the program. 
 
-	while frame <= 100:
+	while True:
 		if menu.gamerunning == True:
 			break
 		elif menu.tutorielrunning == True:
@@ -535,10 +536,12 @@ if __name__ == '__main__':
 			(x,y) = center
 
 			pygame.draw.circle(screen,menu.cursorcolor,(600-x,y),3,0)
-			# print radius
-			# print calradi
+
 			if radius >= calradi + 15:
 				pygame.event.post(button_event)
+				menu.cursorcolor = redColor
+			else:
+				menu.cursorcolor = blueColor
 
 		menu.update()
 		webcam.frame = cv2.flip(webcam.frame, 1)
@@ -548,7 +551,14 @@ if __name__ == '__main__':
 
 		master.process_events()
 		frame += 1
-		# print menu.gamerunning
+
+		if key == ord("q"):
+			# Release the camera, close open windows
+			webcam.camera.release()
+			cv2.destroyAllWindows()
+			master.close()
+			pygame.quit()
+
 		time.sleep(.001)
 
 	if menu.tutorielrunning == True:
@@ -576,13 +586,13 @@ if __name__ == '__main__':
 		spells = ['Flipendo!', 'Wingardium Leviosa', 'Incendio', 'Avada Kedavra', 'Stupefy', 'Expelliarmus']
 
 	while menu.gamerunning or menu.tutorielrunning:
-		print enemy.hp
+		# print enemy.hp
 		if enemy.hp <= 0:
 			view.wongame()
 		else:
 			# fffff
 			view.update()
-			# model.spell_check()
+
 			spellnum = model.spell_check()
 			if spell_frame == 1:
 				print 'You cast ', spells[spellnum]
@@ -637,12 +647,11 @@ if __name__ == '__main__':
 		frame = frame + 1
 		time.sleep(.001)
 		if key == ord("q"):
-			running = False
-			if running == False:
-				# Release the camera, close open windows
-				webcam.camera.release()
-				cv2.destroyAllWindows()
-				master.close()
+			# Release the camera, close open windows
+			webcam.camera.release()
+			cv2.destroyAllWindows()
+			master.close()
+			pygame.quit()
 		if key == ord("c"):
 			# Clear spell chain
 			model.spell_clear()
