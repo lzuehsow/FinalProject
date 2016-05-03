@@ -222,32 +222,32 @@ class DesktopModel(object):
 	def spell_check(self):
 		if (self.grid1flag and self.grid4flag and self.grid7flag) and (self.grid2flag == False and self.grid3flag == False and self.grid5flag == False and self.grid6flag == False and self.grid8flag == False and self.grid9flag == False) and (spell_frame <= 10):		
 			enemy.hit = True
-			return 1
+			return 0
 			# Flipendo
 		# fffff
 		elif (self.grid3flag and self.grid6flag and self.grid9flag) and (self.grid1flag == False and self.grid2flag == False and self.grid4flag == False and self.grid5flag == False and self.grid7flag == False and self.grid8flag == False) and (spell_frame <= 10):
 			enemy.hit = True
-			return 2
+			return 1
 			# Wingardium Leviosa
 
 		elif (self.grid1flag and self.grid2flag and self.grid4flag and self.grid5flag) and (self.grid3flag == False and self.grid6flag == False and self.grid7flag == False and self.grid8flag == False and self.grid9flag == False) and (spell_frame <= 10):
 			enemy.hit = True
-			return 3
+			return 2
 			# Incendio
 
 		elif (self.grid2flag and self.grid4flag and self.grid5flag and self.grid6flag and self.grid8flag) and (self.grid1flag == False and self.grid3flag == False and self.grid7flag == False and self.grid9flag == False) and (spell_frame <= 10):
 			enemy.hit = True
-			return 4
+			return 3
 			# Avada Kedavra
 
 		elif (self.grid3flag and self.grid4flag and self.grid5flag and self.grid6flag and self.grid7flag) and (self.grid1flag == False and self.grid2flag == False and self.grid8flag == False and self.grid9flag == False) and (spell_frame <= 10):
 			enemy.hit = True
-			return 5
+			return 4
 			# Stupefy
 
 		elif (self.grid3flag and self.grid5flag and self.grid6flag and self.grid7flag and self.grid8flag) and (self.grid1flag == False and self.grid2flag == False and self.grid4flag == False and self.grid9flag == False) and (spell_frame <= 10):
 			enemy.hit = True
-			return 6
+			return 5
 			# Expelliarmus
 
 		else:
@@ -308,14 +308,18 @@ class Menu(object):
 	def __init__(self):
 		self.screen = screen.fill(whiteColor)
 		self.font = pygame.font.SysFont("monospace", 15)
+
 		self.cursorcolor = blueColor
+
 		self.gamerunning = False
 		self.tutorielrunning = False # The thought of exercise fills you with... determination!
+
 	def Button(self, x, y, color, text = "Text"):
 		self.x = x
 		self.y = y
 		self.width = 200
 		self.height = 50
+
 		self.text = self.font.render(text, 20, blackColor)
 
 		screen.fill(color,Rect(self.x,self.y,self.width,self.height))
@@ -352,10 +356,11 @@ class PygameView(object):
 
 		# Load enemy sprite png
 		self.sprite = pygame.image.load(sprite).convert_alpha()
+		self.sprite = pygame.transform.scale(self.sprite, (600,720))
 
 		# Load spell damage animation png
 		self.explosion = pygame.image.load(explosion).convert_alpha()
-		self.explosion = pygame.transform.scale(self.explosion, (250,250))
+		self.explosion = pygame.transform.scale(self.explosion, (200,200))
 
 		# Draw the enemy's HP bar
 		screen.fill((0,255,0),Rect(10,10,100,20))
@@ -373,7 +378,7 @@ class PygameView(object):
 
 		# Update the enemy's HP bar
 		if enemy.hit and (spell_frame == 1) and enemy.hp > 0:
-			screen.fill((255,0,0),Rect(10,10,(125 - enemy.hp),20))
+			screen.fill((255,0,0),Rect(10,10,(150 - enemy.hp),20))
 		else:
 			pass
 
@@ -555,6 +560,12 @@ if __name__ == '__main__':
 
 		spells = ['Flipendo!', 'Wingardium Leviosa', 'Incendio', 'Avada Kedavra', 'Stupefy', 'Expelliarmus']
 
+		directions = menu.font.render("Press q to quit", 40, blackColor)
+		screen.blit(directions, (300, 15))
+
+		directions = menu.font.render("Press c to start casting again", 40, blackColor)
+		screen.blit(directions, (300, 35))
+
 	if menu.gamerunning == True:
 		background = ['chamberofsecrets.png', 'forbiddenforest.jpeg', 'greathall.png', 'ministryofmagicatrium.png', 'umbridgeoffice.png']
 		opponent = ['voldemort.png', 'umbridge.png', 'malfoy.png', 'bellatrix.png']
@@ -565,6 +576,7 @@ if __name__ == '__main__':
 		spells = ['Flipendo!', 'Wingardium Leviosa', 'Incendio', 'Avada Kedavra', 'Stupefy', 'Expelliarmus']
 
 	while menu.gamerunning or menu.tutorielrunning:
+		print enemy.hp
 		if enemy.hp <= 0:
 			view.wongame()
 		else:
@@ -575,13 +587,13 @@ if __name__ == '__main__':
 			if spell_frame == 1:
 				print 'You cast ', spells[spellnum]
 			
-				if 1 <= spellnum and spellnum <= 2:
+				if 0 <= spellnum and spellnum <= 1:
 					enemy.DamageTaken(25)
 					pygame.mixer.music.load('Swooshing.mp3')
-				if spellnum == 3:
+				if spellnum == 2:
 					enemy.DamageTaken(50)
 					pygame.mixer.music.load('SmallFireball.mp3')
-				if 4 <= spellnum and spellnum <= 6:
+				if 3 <= spellnum and spellnum <= 5:
 					enemy.DamageTaken(100)
 					pygame.mixer.music.load('Gun.mp3')
 
@@ -645,5 +657,12 @@ if __name__ == '__main__':
 			view.sprite = pygame.transform.scale(view.sprite, (600,720))
 			screen.blit(view.background,(0,0))
 			screen.fill((0,255,0),Rect(10,10,100,20))
+
+			if menu.tutorielrunning == True:
+				directions = menu.font.render("Press q to quit", 40, blackColor)
+				screen.blit(directions, (300, 15))
+
+				directions = menu.font.render("Press c to start casting again", 40, blackColor)
+				screen.blit(directions, (300, 35))
 
 			pygame.display.update()
