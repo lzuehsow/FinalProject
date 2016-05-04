@@ -521,13 +521,13 @@ if __name__ == '__main__':
 
 	while True:
 
-		pygame.mixer.music.load('hogwartsmarch.mp3')
-		pygame.mixer.music.play(0)
-
 		if menu.gamerunning == True:
 			break
 		elif menu.tutorielrunning == True:
 			break
+		else:
+			pygame.mixer.music.load('hogwartsmarch.mp3')
+			pygame.mixer.music.play(0)
 
 		gotcenter = webcam.getcenter(greenLower, greenUpper)
 
