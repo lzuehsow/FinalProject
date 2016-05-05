@@ -9,6 +9,8 @@ This project is a fanmade Harry Potter dueling game. In this game, the player ba
 
 This is our final project for our Spring 2016 Software Design class at the Olin College of Engineering. We are both huge nerds when it comes to Harry Potter, so we thought it would be pretty rad to create a physical magic dueling game.
 
+If you would like to see our website, it can be viewed here! https://sites.google.com/site/theduelingassociation/
+
 ## Installation
 There are a few packages you may need to install in order to play. 
 
