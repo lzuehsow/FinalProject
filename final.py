@@ -105,8 +105,8 @@ class WebCam(object):
 		# What happens next depends on whether the player is still alive or not
 		if player.hp <= 0:
 			enemy.hp = 100
-			enemy.x = -700
-			enemy.y = 0
+			enemy.x = -800
+			enemy.y = -200
 			screen.fill((49,79,79))
 			view.sprite = pygame.transform.scale(view.sprite, (2100,2300))
 			cv2.rectangle(webcam.frame, (0,0), (600,450), blackColor, -1)
@@ -116,6 +116,7 @@ class WebCam(object):
 			webcam.frame = cv2.flip(webcam.frame, 1)
 			# img = cv2.imread('gameover.jpg')
 			# cv2.imshow('Game Over', img)
+# ffff
 		else:
 			cv2.rectangle(webcam.frame, (50,10), (550,30), greenColor, -1)
 			cv2.rectangle(webcam.frame, (50,10), ((550 - player.hp),30), redColor, -1)
@@ -366,12 +367,21 @@ class PygameView(object):
 		# Load spell damage animation png
 		self.explosion = pygame.image.load(explosion).convert_alpha()
 		self.explosion = pygame.transform.scale(self.explosion, (150,150))
+		# self.explosion = self.color_surface(self.explosion, 120, 78, 240)
+		# ffffff
 
 		# Draw the enemy's HP bar
 		screen.fill((0,255,0),Rect(10,10,100,20))
 
 		# Update game display
 		pygame.display.update()
+
+	# def color_surface(self, surface, red, green, blue):
+	# 	"""Changes the color of images"""
+	# 	arr = pygame.surfarray.pixels3d(surface)
+	# 	arr[:,:,0] = red
+	# 	arr[:,:,1] = green
+	# 	arr[:,:,2] = blue
 
 	def update(self):
 		"""Draw the game state to the screen"""
@@ -390,6 +400,7 @@ class PygameView(object):
 		pygame.display.update()
 
 	def wongame(self):
+		"""Displays the win game screen"""
 		screen.blit(self.winscreen,(0,0))
 		pygame.display.update()
 
@@ -471,7 +482,6 @@ if __name__ == '__main__':
 	redColor = pygame.Color(0,0,255)
 	greenColor = pygame.Color(0,255,0)
 	blueColor = pygame.Color(255,0,0)
-	purpleColor = pygame.Color(148,0,211)
 	whiteColor = pygame.Color(255,255,255)
 	blackColor = pygame.Color(0,0,0)
 
@@ -485,6 +495,7 @@ if __name__ == '__main__':
 	greenLower = (29,86,6)
 	greenUpper = (64,255,255)
 
+	check = 0
 	frame = 0
 	spell_frame = 0
 	eventcount = 0
@@ -497,6 +508,9 @@ if __name__ == '__main__':
 	menu = Menu()
 	model = DesktopModel()
 	master = Controller(model)
+
+	pygame.mixer.music.load('hogwartsmarch.mp3')
+	pygame.mixer.music.play(0)
 
 	GameOverText1 = "You and all of your friends are dead."
 	GameOverText2 = "Congrats."
@@ -525,9 +539,6 @@ if __name__ == '__main__':
 			break
 		elif menu.tutorielrunning == True:
 			break
-		else:
-			pygame.mixer.music.load('hogwartsmarch.mp3')
-			pygame.mixer.music.play(0)
 
 		gotcenter = webcam.getcenter(greenLower, greenUpper)
 
@@ -589,10 +600,23 @@ if __name__ == '__main__':
 
 		spells = ['Flipendo!', 'Wingardium Leviosa', 'Incendio', 'Avada Kedavra', 'Stupefy', 'Expelliarmus']
 
+
 	while menu.gamerunning or menu.tutorielrunning:
 		# print enemy.hp
+		if player.hp <= 0:
+			check += 1
+			if check == 1:
+				pygame.mixer.music.load('Voldemort.mp3')
+				pygame.mixer.music.set_volume(1.0)
+				pygame.mixer.music.play(0)
+
 		if enemy.hp <= 0:
+			check += 1
 			view.wongame()
+			if check == 1:
+				pygame.mixer.music.load('win.mp3')
+				pygame.mixer.music.set_volume(1.0)
+				pygame.mixer.music.play(0)
 		else:
 			# fffff
 			view.update()
@@ -661,6 +685,7 @@ if __name__ == '__main__':
 			model.spell_clear()
 		if key == ord("r"):
 			# Reset game
+			check = 0
 			enemy.x = 25
 			enemy.y = 100
 			enemy.hp = 100
